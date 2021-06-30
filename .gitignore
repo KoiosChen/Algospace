@@ -164,3 +164,4 @@ venv/include/
 venv/lib/
 venv/pyvenv.cfg
 venv/share/
+!/app/run.log

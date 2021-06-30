@@ -43,10 +43,10 @@ class TestingConfig(Config):
 
 
 class ProductionConfig(Config):
-    DB_USERNAME = os.environ.get('DATABASE_USERNAME') or 'gamefast'
-    DB_PASSWORD = os.environ.get('DATABASE_PASSWORD') or '123123'
+    DB_USERNAME = os.environ.get('DATABASE_USERNAME') or 'algospace'
+    DB_PASSWORD = os.environ.get('DATABASE_PASSWORD') or 'Algo_1324_)(*'
     DB_HOST = os.environ.get('DATABASE_HOST') or '127.0.0.1'
-    DB_DATABASE = os.environ.get('DATABASE_DATABASE') or 'gamefast'
+    DB_DATABASE = os.environ.get('DATABASE_DATABASE') or 'algospace'
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://' + DB_USERNAME + ':' + DB_PASSWORD + '@' + DB_HOST + '/' + DB_DATABASE
 
 
