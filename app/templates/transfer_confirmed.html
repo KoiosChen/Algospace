@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+
+
+{% block subheader %}
+    <div class="m-subheader ">
+        <div class="d-flex align-items-center">
+            <div class="mr-auto">
+                <h3 class="m-subheader__title m-subheader__title--separator">
+                    内外网管理
+                </h3>
+                <ul class="m-subheader__breadcrumbs m-nav m-nav--inline">
+                    <li class="m-nav__item m-nav__item--home">
+                        <a href="#" class="m-nav__link m-nav__link--icon">
+                            <i class="m-nav__link-icon la la-home"></i>
+                        </a>
+                    </li>
+                    <li class="m-nav__separator">
+                        -
+                    </li>
+                    <li class="m-nav__item">
+                        <a href="" class="m-nav__link">
+											<span class="m-nav__link-text">
+												文件传输管理
+											</span>
+                        </a>
+                    </li>
+                    <li class="m-nav__separator">
+                        -
+                    </li>
+                    <li class="m-nav__item">
+                        <a href="" class="m-nav__link">
+											<span class="m-nav__link-text">
+												已审核的申请
+											</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block pagecontent %}
+    <div class="m-portlet m-portlet--success m-portlet--head-solid-bg">
+        <div class="m-portlet__head">
+            <div class="m-portlet__head-caption">
+                <div class="m-portlet__head-title">
+                    <h3 class="m-portlet__head-text">
+                        已审核订单
+                        <small>
+                            已审核订单
+                        </small>
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div class="m-portlet__body">
+            <div class="m_datatable" id="ajax_data"></div>
+        </div>
+    </div>
+
+    <!-- 模态框（Modal）end -->
+{% endblock %}
+
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        $("#newOne").click(function () {
+            $("#add_machine_room").removeData("bs.modal").modal('show');
+            $("#m_repeater_3 :input").bind("input propertychange", repeat_input);
+        });
+
+        $('#m_daterangepicker_fromexcel').on('cancel.daterangepicker', function (ev, picker) {
+            //do something, like clearing an input
+            $('input[name="daterange"]').val('');
+        });
+
+        $("#mail_from_excel").click(function () {
+            $("#modal_transfer").removeData("bs.modal").modal('show');
+        });
+
+        $("#sendmail").click(function () {
+            console.log('sending mail');
+            DatatableRemoteAjaxCustomer.multiselect();
+        });
+
+        // toastr options
+        toastr.options = {
+            "closeButton": true, //是否显示关闭按钮
+            "debug": false, //是否使用debug模式
+            "progressBar": false,
+            "positionClass": "toast-top-center",//弹出窗的位置
+            "showDuration": "2000",//显示的动画时间
+            "hideDuration": "1000",//消失的动画时间
+            "timeOut": "2000", //展现时间
+            "extendedTimeOut": "1000",//加长展示时间
+            "showEasing": "swing",//显示时的动画缓冲方式
+            "hideEasing": "linear",//消失时的动画缓冲方式
+            "showMethod": "fadeIn",//显示时的动画方式
+            "hideMethod": "fadeOut" //消失时的动画方式
+        };
+
+        $("#clear_all_data").click(function () {
+            if (confirm("是否确认清空数据？")) {
+                $("#cutover_title_2").val("");
+                $("input[name$='][A]']").val("");
+                $("input[name$='][Z]']").val("");
+                $('input[name="daterange"]').val('');
+
+                $("#cutover_reason_2").val("");
+                $("#cutover_duration_2").val("");
+                $("#emergency_2").prop("checked", false);
+                $("#m_datepicker_1_modal_2").val("");
+                $('#m_form_excel_msg').addClass('m--hide').hide();
+                $("div.form-control-feedback").remove();
+            }
+        });
+
+        function HTMerConfirm(sc_id, action) {
+            if (confirm("确定操作吗")) {
+                let params = {"sc_id": sc_id, "action": action};
+                console.log(params)
+                $.ajax({
+                    type: "POST",          //提交方式          
+                    url: "transfer_confirm_action",  //提交的页面/方法名          
+                    data: JSON.stringify(params, null, '\t'),          //参数（如果没有参数：null）          
+                    contentType: "application/json; charset=utf-8",
+                    success: function (msg) {
+                        if (msg.status === 'OK') {
+                            toastr.info(msg.content);
+                            $('#ajax_data').mDatatable().destroy();
+                            DatatableRemoteAjaxTransferFilesConfirm.init();
+                        }
+                        else {
+                            toastr.warning(msg.content);
+                        }
+                    },
+                    error: function (xhr, msg, e) {
+                        toastr.warning("删除");
+                    }
+                });
+            } else {
+                toastr.warning('取消删除')
+            }
+        }
+
+
+        $('#update').on('shown.bs.modal', function () {
+            if (document.getElementsByName('postli').length > 0) {
+                setTimeout(show_jpage, 50);
+
+                function show_jpage() {
+                    $("div.holder").jPages({
+                        containerID: "itemContainer",
+                        perPage: 5
+                    });
+                }
+            }
+        });
+
+        //提交更改
+        function update() {
+            //获取模态框数据
+            var alarm_id = $('#id').val();
+            var body = $('#flask-pagedown-body').val();
+            if (body) {
+                $.ajax({
+                    type: "POST",
+                    url: "post_body",
+                    data: "&alarm_id=" + alarm_id + "&body=" + body,
+                    dataType: 'html',
+                    contentType: "application/x-www-form-urlencoded; charset=utf-8",
+                    success: function (result) {
+                        toastr.info('提交成功')
+                        setTimeout("location.reload()", 1000);
+                    },
+                    error: function (xhr, msg, e) {
+                        toastr.warning("系统繁忙");
+                    }
+                });
+            } else {
+                toastr.warning("未输入任何内容")
+            }
+        }
+    </script>
+    <script src="../static/metronic/transfer_files/transfer_confirmed_orders.js" type="text/javascript"></script>
+{% endblock %}

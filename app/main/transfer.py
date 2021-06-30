@@ -24,6 +24,13 @@ def transfer_confirm():
     return render_template('transfer_confirm.html')
 
 
+@main.route('/transfer_confirmed', methods=['GET'])
+@login_required
+@permission_required(Permission.MAN_ON_DUTY)
+def transfer_confirmed():
+    return render_template('transfer_confirmed.html')
+
+
 @main.route('/transfer_confirm_action', methods=['POST'])
 @login_required
 @permission_required(Permission.MAN_ON_DUTY)

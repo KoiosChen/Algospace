@@ -5,7 +5,7 @@
         {{ pagedown.html_head() }}
         <meta charset="utf-8"/>
         <title>
-            ORCA
+            ALGOSPACE
         </title>
         <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -117,7 +117,7 @@
 
                                 <li class="m-menu__item  m-menu__item--submenu m-menu__item--rel"
                                     data-menu-submenu-toggle="click" data-redirect="true" aria-haspopup="true">
-                                    <span class="m-r-sm text-muted welcome-message">Welcome to Orca</span>
+                                    <span class="m-r-sm text-muted welcome-message">Welcome to ALGOSPACE</span>
                                 </li>
                             </ul>
                         </div>
@@ -150,73 +150,14 @@
                                                         </div>
                                                         <div class="m-card-user__details">
 																<span class="m-card-user__name m--font-weight-500">
-																	Mark Andre
+																	Algospace
 																</span>
-                                                            <a href=""
-                                                               class="m-card-user__email m--font-weight-300 m-link">
-                                                                mark.andre@gmail.com
-                                                            </a>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="m-dropdown__body">
                                                     <div class="m-dropdown__content">
                                                         <ul class="m-nav m-nav--skin-light">
-                                                            <li class="m-nav__section m--hide">
-																	<span class="m-nav__section-text">
-																		Section
-																	</span>
-                                                            </li>
-                                                            <li class="m-nav__item">
-                                                                <a href="header/profile.html" class="m-nav__link">
-                                                                    <i class="m-nav__link-icon flaticon-profile-1"></i>
-                                                                    <span class="m-nav__link-title">
-																			<span class="m-nav__link-wrap">
-																				<span class="m-nav__link-text">
-																					My Profile
-																				</span>
-																				<span class="m-nav__link-badge">
-																					<span class="m-badge m-badge--success">
-																						2
-																					</span>
-																				</span>
-																			</span>
-																		</span>
-                                                                </a>
-                                                            </li>
-                                                            <li class="m-nav__item">
-                                                                <a href="header/profile.html" class="m-nav__link">
-                                                                    <i class="m-nav__link-icon flaticon-share"></i>
-                                                                    <span class="m-nav__link-text">
-																			Activity
-																		</span>
-                                                                </a>
-                                                            </li>
-                                                            <li class="m-nav__item">
-                                                                <a href="header/profile.html" class="m-nav__link">
-                                                                    <i class="m-nav__link-icon flaticon-chat-1"></i>
-                                                                    <span class="m-nav__link-text">
-																			Messages
-																		</span>
-                                                                </a>
-                                                            </li>
-                                                            <li class="m-nav__separator m-nav__separator--fit"></li>
-                                                            <li class="m-nav__item">
-                                                                <a href="header/profile.html" class="m-nav__link">
-                                                                    <i class="m-nav__link-icon flaticon-info"></i>
-                                                                    <span class="m-nav__link-text">
-																			FAQ
-																		</span>
-                                                                </a>
-                                                            </li>
-                                                            <li class="m-nav__item">
-                                                                <a href="header/profile.html" class="m-nav__link">
-                                                                    <i class="m-nav__link-icon flaticon-lifebuoy"></i>
-                                                                    <span class="m-nav__link-text">
-																			Support
-																		</span>
-                                                                </a>
-                                                            </li>
                                                             <li class="m-nav__separator m-nav__separator--fit"></li>
                                                             <li class="m-nav__item">
                                                                 <a href="/auth/logout"
@@ -305,116 +246,127 @@
                                         </a>
                                     </li>
                                     {% if current_user.is_manonduty() %}
-                                    <li class="m-menu__item " aria-haspopup="true">
-                                        <a href="/transfer_confirm"
-                                           class="m-menu__link ">
-                                            <i class="m-menu__link-bullet m-menu__link-bullet--dot">
-                                                <span></span>
-                                            </i>
-                                            <span class="m-menu__link-text">
-													管理员审核
-												</span>
-                                        </a>
-                                    </li>
-                                    {% endif %}
-                                </ul>
-                            </div>
-                        </li>
-                        {% if current_user.is_snoc() %}
-                        <li class="m-menu__item  m-menu__item--submenu" aria-haspopup="true"
-                            data-menu-submenu-toggle="hover">
-                            <a href="#" class="m-menu__link m-menu__toggle">
-                                <i class="m-menu__link-icon flaticon-settings-1"></i>
-                                <span class="m-menu__link-text">
-										系统管理
-									</span>
-                                <i class="m-menu__ver-arrow la la-angle-right"></i>
-                            </a>
-                            <div class="m-menu__submenu ">
-                                <span class="m-menu__arrow"></span>
-                                <ul class="m-menu__subnav">
-                                    <li class="m-menu__item  m-menu__item--parent" aria-haspopup="true">
-											<span class="m-menu__link">
-												<span class="m-menu__link-text">
-													系统管理
-												</span>
-											</span>
-                                    </li>
-                                    <li class="m-menu__item" aria-haspopup="true">
-                                        <a href="/parameterSetting" class="m-menu__link">
-                                            <i class="m-menu__link-bullet m-menu__link-bullet--dot">
-                                                <span></span>
-                                            </i>
-                                            <span class="m-menu__link-text">
-													参数设置
-												</span>
-                                        </a>
-                                    </li>
-                                    <li class="m-menu__item " aria-haspopup="true">
-                                        <a href="/syslog_config" class="m-menu__link ">
-                                            <i class="m-menu__link-bullet m-menu__link-bullet--dot">
-                                                <span></span>
-                                            </i>
-                                            <span class="m-menu__link-text">
-													Syslog管理
-												</span>
-                                        </a>
-                                    </li>
-                                    <li class="m-menu__item " aria-haspopup="true">
-                                        <a href="/machine_room" class="m-menu__link ">
-                                            <i class="m-menu__link-bullet m-menu__link-bullet--dot">
-                                                <span></span>
-                                            </i>
-                                            <span class="m-menu__link-text">
-													机房管理
-												</span>
-                                        </a>
-                                    </li>
-                                    <li class="m-menu__item " aria-haspopup="true">
-                                        <a href="/baidumap" class="m-menu__link ">
-                                            <i class="m-menu__link-bullet m-menu__link-bullet--dot">
-                                                <span></span>
-                                            </i>
-                                            <span class="m-menu__link-text">
-													地图展示
-												</span>
-                                        </a>
-                                    </li>
-                                    <li class="m-menu__item " aria-haspopup="true">
-                                        <a href="/devices_manage" class="m-menu__link ">
-                                            <i class="m-menu__link-bullet m-menu__link-bullet--dot">
-                                                <span></span>
-                                            </i>
-                                            <span class="m-menu__link-text">
-													设备管理
-												</span>
-                                        </a>
-                                    </li>
-                                    <li class="m-menu__item " aria-haspopup="true">
-                                        <a href="/local_user_check" class="m-menu__link ">
-                                            <i class="m-menu__link-bullet m-menu__link-bullet--dot">
-                                                <span></span>
-                                            </i>
-                                            <span class="m-menu__link-text">
-													用户管理
-												</span>
-                                        </a>
-                                    </li>
-                                    {% if current_user.is_administrator() %}
                                         <li class="m-menu__item " aria-haspopup="true">
-                                            <a href="licence_control" class="m-menu__link ">
+                                            <a href="/transfer_confirm"
+                                               class="m-menu__link ">
                                                 <i class="m-menu__link-bullet m-menu__link-bullet--dot">
                                                     <span></span>
                                                 </i>
                                                 <span class="m-menu__link-text">
-													许可证管理
-												</span>
+													管理员审核
+                                            </span>
+                                            </a>
+                                        </li>
+                                        <li class="m-menu__item " aria-haspopup="true">
+                                            <a href="/transfer_confirmed"
+                                               class="m-menu__link ">
+                                                <i class="m-menu__link-bullet m-menu__link-bullet--dot">
+                                                    <span></span>
+                                                </i>
+                                                <span class="m-menu__link-text">
+													已审核订单
+                                            </span>
                                             </a>
                                         </li>
                                     {% endif %}
                                 </ul>
                             </div>
                         </li>
+                        {% if current_user.is_snoc() %}
+                            <li class="m-menu__item  m-menu__item--submenu" aria-haspopup="true"
+                                data-menu-submenu-toggle="hover">
+                                <a href="#" class="m-menu__link m-menu__toggle">
+                                    <i class="m-menu__link-icon flaticon-settings-1"></i>
+                                    <span class="m-menu__link-text">
+										系统管理
+									</span>
+                                    <i class="m-menu__ver-arrow la la-angle-right"></i>
+                                </a>
+                                <div class="m-menu__submenu ">
+                                    <span class="m-menu__arrow"></span>
+                                    <ul class="m-menu__subnav">
+                                        <li class="m-menu__item  m-menu__item--parent" aria-haspopup="true">
+											<span class="m-menu__link">
+												<span class="m-menu__link-text">
+													系统管理
+												</span>
+											</span>
+                                        </li>
+                                        <li class="m-menu__item" aria-haspopup="true">
+                                            <a href="/parameterSetting" class="m-menu__link">
+                                                <i class="m-menu__link-bullet m-menu__link-bullet--dot">
+                                                    <span></span>
+                                                </i>
+                                                <span class="m-menu__link-text">
+													参数设置
+												</span>
+                                            </a>
+                                        </li>
+                                        <li class="m-menu__item " aria-haspopup="true">
+                                            <a href="/syslog_config" class="m-menu__link ">
+                                                <i class="m-menu__link-bullet m-menu__link-bullet--dot">
+                                                    <span></span>
+                                                </i>
+                                                <span class="m-menu__link-text">
+													Syslog管理
+												</span>
+                                            </a>
+                                        </li>
+                                        <li class="m-menu__item " aria-haspopup="true">
+                                            <a href="/machine_room" class="m-menu__link ">
+                                                <i class="m-menu__link-bullet m-menu__link-bullet--dot">
+                                                    <span></span>
+                                                </i>
+                                                <span class="m-menu__link-text">
+													机房管理
+												</span>
+                                            </a>
+                                        </li>
+                                        <li class="m-menu__item " aria-haspopup="true">
+                                            <a href="/baidumap" class="m-menu__link ">
+                                                <i class="m-menu__link-bullet m-menu__link-bullet--dot">
+                                                    <span></span>
+                                                </i>
+                                                <span class="m-menu__link-text">
+													地图展示
+												</span>
+                                            </a>
+                                        </li>
+                                        <li class="m-menu__item " aria-haspopup="true">
+                                            <a href="/devices_manage" class="m-menu__link ">
+                                                <i class="m-menu__link-bullet m-menu__link-bullet--dot">
+                                                    <span></span>
+                                                </i>
+                                                <span class="m-menu__link-text">
+													设备管理
+												</span>
+                                            </a>
+                                        </li>
+                                        <li class="m-menu__item " aria-haspopup="true">
+                                            <a href="/local_user_check" class="m-menu__link ">
+                                                <i class="m-menu__link-bullet m-menu__link-bullet--dot">
+                                                    <span></span>
+                                                </i>
+                                                <span class="m-menu__link-text">
+													用户管理
+												</span>
+                                            </a>
+                                        </li>
+                                        {% if current_user.is_administrator() %}
+                                            <li class="m-menu__item " aria-haspopup="true">
+                                                <a href="licence_control" class="m-menu__link ">
+                                                    <i class="m-menu__link-bullet m-menu__link-bullet--dot">
+                                                        <span></span>
+                                                    </i>
+                                                    <span class="m-menu__link-text">
+													许可证管理
+												</span>
+                                                </a>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </li>
                         {% endif %}
                     </ul>
                 </div>
@@ -446,7 +398,7 @@
                 <div class="m-stack m-stack--flex-tablet-and-mobile m-stack--ver m-stack--desktop">
                     <div class="m-stack__item m-stack__item--left m-stack__item--middle m-stack__item--last">
 							<span class="m-footer__copyright">
-								2017 &copy; ORCA by Peter Chen
+								2021 &copy; ALGOSPACE
 							</span>
                     </div>
                 </div>
