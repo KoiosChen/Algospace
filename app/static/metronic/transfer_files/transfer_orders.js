@@ -107,25 +107,6 @@ var DatatableRemoteAjaxTransferFiles = function () {
                     textAlign: 'center',
                     type: 'date',
                     format: 'YYYY/MM/DD',
-                }, {
-                    field: 'Actions',
-                    width: 100,
-                    textAlign: 'center',
-                    title: '操作',
-                    sortable: false,
-                    overflow: 'visible',
-                    template: function (row) {
-                        console.log(row.id + ' ' + row.status);
-                        return '<a ' + 'onClick="return HTMerDel(' + row.id + ')" class="m-portlet__nav-link btn m-btn m-btn--hover-danger m-btn--icon m-btn--icon-only m-btn--pill" title="Delete">\
-                                <i class="la la-ban"></i>\
-                            </a>\
-                            <a ' + 'data-toggle="modal" data-target="#new_templet_model" onclick="editInfo(' + row.id + ', \'' + row.templet_name + '\', \'' + row.templet_desc + '\')" class="m-portlet__nav-link btn m-btn m-btn--hover-accent m-btn--icon m-btn--icon-only m-btn--pill" title="Edit details">\
-                                <i class="la la-edit"></i>\
-                            </a>\
-                        ';
-
-
-                    },
                 }],
         });
     };
