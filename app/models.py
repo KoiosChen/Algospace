@@ -1197,7 +1197,7 @@ API_URL = {"interface": "http://127.0.0.1:5222/interface",
 
 ACCESS_DOMAIN = "http://10.172.172.164:1111/assets/"
 
-FILE_URL = "http://shaxyxa-fdfs01.xyxa.cnsh.algospace.org"
+FILE_URL = "http://fdfs.algospace.net"
 
 man_devices = {'10.254.1.1': '<93>上海新业[10.254.1.1]', '10.254.1.27': '<93>上海418[10.254.1.27]',
                '10.254.1.44': '<93>上海418-102[10.254.1.44]', '10.254.1.35': '<68>上海418[10.254.1.35]',
