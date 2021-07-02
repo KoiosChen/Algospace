@@ -1,13 +1,18 @@
 from flask import session, render_template, request, jsonify
 from flask_login import login_required
-from ..models import Permission, Role, Customer, MailTemplet, MailTemplet_Path, MailTemplet_Path_Temp, \
-    Cutover_Path_Temp, TransferOrders, FILE_URL
-from ..decorators import permission_required, permission
+from ..models import Permission, TransferOrders, FILE_URL
+from ..decorators import permission_required
 from .. import logger, db
 from . import main
 from app.proccessing_data.proccess.public_methods import upload_fdfs, new_data_obj
 import datetime
 from app.MyModule.SendMail import sendmail
+
+Search_Fields = [['文件名称', 'filename'],
+                 ['申请人', 'apply_user'],
+                 ['审核结果', 'confirm_result'],
+                 ['审核人', 'confirm_user']
+                 ]
 
 
 @main.route('/transfer', methods=['GET'])
@@ -28,7 +33,7 @@ def transfer_confirm():
 @login_required
 @permission_required(Permission.MAN_ON_DUTY)
 def transfer_confirmed():
-    return render_template('transfer_confirmed.html')
+    return render_template('transfer_confirmed.html', search_fields=Search_Fields)
 
 
 @main.route('/transfer_confirm_action', methods=['POST'])

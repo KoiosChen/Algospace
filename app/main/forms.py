@@ -4,7 +4,7 @@ from wtforms.validators import DataRequired, Email, Length, Regexp, EqualTo, IPA
 from wtforms import StringField, SubmitField, PasswordField, SelectField, SelectMultipleField, DateTimeField, \
     RadioField, TextAreaField
 from flask_pagedown.fields import PageDownField
-from ..models import Role, Area, JobDescription
+from ..models import Role
 from ..my_func import get_machine_room_by_area, get_device_name
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 
@@ -37,17 +37,6 @@ class DeviceForm(Form):
         super(DeviceForm, self).__init__()
         print(session.get('permit_machine_room'))
         self.machine_room_name.choices = get_machine_room_by_area(session.get('permit_machine_room'))
-
-
-class AreaConfigForm(Form):
-    area_name = StringField('请输入大区名称:', validators=[DataRequired()])
-    area_machine_room = SelectMultipleField('请选择可管辖机房', validators=[DataRequired()])
-    submit = SubmitField('提交')
-
-    def __init__(self):
-        super(AreaConfigForm, self).__init__()
-        self.area_machine_room.choices = get_machine_room_by_area(session.get('permit_machine_room'))
-
 
 class ManualSync(Form):
     device_name = SelectMultipleField(label='请选择OLT设备:')

@@ -1,11 +1,9 @@
-from flask import render_template, redirect, request, url_for, flash, session, jsonify, json
+from flask import render_template, redirect, request, url_for, flash, session, jsonify
 from flask_login import login_user, logout_user, login_required
-from ..models import User, Area
+from ..models import User
 from . import auth
 from .. import logger
-from app.decorators import permission_ip
-from ldap3 import Server, Connection, SUBTREE, SAFE_SYNC
-from ldap3.extend.microsoft.addMembersToGroups import ad_add_members_to_groups as addUsersInGroups
+from ldap3 import Server, Connection, SUBTREE
 
 ldap_host = '10.21.90.10'  # ldap服务器地址
 ldap_port = 389  # 默认389
