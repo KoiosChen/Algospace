@@ -3,7 +3,6 @@ import sys
 import queue
 import threading
 import re
-from ..r2d2.SyslogWorker import py_syslog_olt_monitor, general_syslog_monitor
 from ..models import SyslogAlarmConfig, Syslog, syslog_facility, syslog_serverty
 from .. import db, logger
 from .Counter import manage_key, count
