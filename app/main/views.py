@@ -8,34 +8,6 @@ import json
 import os
 
 
-def get_device_info(machine_room_id):
-    """
-    :param machine_room_id:
-    :return:
-    """
-    device_info = Device.query.filter_by(machine_room_id=machine_room_id).all()
-    logger.debug('device list: {} '.format(device_info))
-    return device_info if device_info else False
-
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-def gen_file_name(filename, path=UPLOAD_FOLDER):
-    """
-    If file was exist already, rename it and return a new name
-    """
-
-    i = 1
-    while os.path.exists(os.path.join(path, filename)):
-        name, extension = os.path.splitext(filename)
-        filename = '%s_%s%s' % (name, str(i), extension)
-        i += 1
-
-    return filename
-
 
 IGNORED_FILES = set(['.gitignore'])
 
