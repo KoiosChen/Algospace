@@ -67,14 +67,7 @@ var DatatableRemoteAjaxTransferFiles = function () {
                 }, {
                     field: 'filename',
                     title: '文件名称',
-                    textAlign: 'center',
-                    // sortable: 'asc', // default sort
-                    filterable: false, // disable or enable filtering
-                    // basic templating support for column rendering,
-                    overflow: 'visible',
-                    template: function (row) {
-                        return '<a href="' + row.file_store_path + '"target="_Blank">' + row.filename + '</a>';
-                    }
+                    textAlign: 'center'
                 }, {
                     field: 'apply_reason',
                     title: '申请理由',
