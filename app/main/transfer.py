@@ -49,9 +49,11 @@ def transfer_confirm_action():
         db.session.add(order)
         db.session.commit()
         logger.info(f'{order.id} is set to {action}')
+        download_url = FILE_URL + '/' + order.file_store_path
+        mail_content = f"Hello, {session['LOGINUSER']}:\nFilename:\t{order.filename}\nDownload URL:\t{download_url}"
         if action == 1:
             SM = sendmail(subject=order.id + "_" + order.filename, mail_to=order.email)
-            SM.send(content=FILE_URL + '/' + order.file_store_path)
+            SM.send(content=mail_content)
         return jsonify({'status': 'OK', 'content': '操作成功'})
     except Exception as e:
         logger.error('Delete user fail:{}'.format(e))
