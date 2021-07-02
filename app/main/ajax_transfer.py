@@ -3,7 +3,6 @@ from flask_login import login_required
 from ..models import Permission, TransferOrders, FILE_URL
 from ..decorators import permission_required
 from . import main
-from sqlalchemy import or_
 
 
 @main.route('/transfer_orders', methods=['GET', 'POST'])

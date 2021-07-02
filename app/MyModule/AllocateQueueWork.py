@@ -1,6 +1,5 @@
 import threading
 from .. import logger, work_q, redis_db
-from ..proccessing_data import datatable_action
 import json
 import uuid
 # from ..MyModule.py_scapy import do

@@ -1,20 +1,11 @@
-from flask import redirect, session, url_for, render_template, flash, request, jsonify, send_from_directory
+from flask import session, render_template, jsonify
 from flask_login import login_required
 from ..models import *
 from ..decorators import permission_required
-from .. import db, logger, scheduler
-from .forms import AreaConfigForm, AreaModal
+from .. import logger
 from . import main
-import time
-from ..MyModule import OperateDutyArrange
-from ..MyModule.UploadFile import uploadfile
-from werkzeug.utils import secure_filename
 import json
-from bs4 import BeautifulSoup
-import datetime
 import os
-import re
-import requests
 
 
 def get_device_info(machine_room_id):
@@ -67,11 +58,3 @@ def all_user():
         all_user_dict[user.id] = {'username': user.username, 'phoneNum': user.phoneNum}
 
     return jsonify(json.dumps(all_user_dict))
-
-
-@main.route('/gps_location', methods=['GET', 'POST'])
-@login_required
-@permission_required(Permission.NETWORK_MANAGER)
-def gps_location():
-    return render_template('GPS.html')
-

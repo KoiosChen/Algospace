@@ -53,8 +53,6 @@ work_q = queue.Queue(maxsize=100)
 # 用于处理请求request的队列
 request_q = queue.Queue(maxsize=1000)
 
-snmp = Snmp.Snmp()
-
 logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S')
 logger = logging.getLogger()
 hdlr = logging.FileHandler("run.log")
@@ -87,9 +85,6 @@ def create_app(config_name):
 
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
-
-    from .sms import sms as sms_blueprint
-    app.register_blueprint(sms_blueprint)
 
     from .auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
