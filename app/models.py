@@ -45,10 +45,21 @@ class Permission:
     ADMINISTER = 0x80
 
 
+class FileType(db.Model):
+    """
+    文件类型
+    """
+    __tablename__ = 'file_type'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(20), nullable=False, index=True)
+    order = db.Column(db.SmallInteger, default=1, index=True, comment='当有排序时')
+
+
 class TransferOrders(db.Model):
     __tablename__ = 'transfer_orders'
     id = db.Column(db.String(64), primary_key=True, default=make_order_id)
     filename = db.Column(db.String(100), index=True)
+    file_type_id = db.Column(db.Integer, db.ForeignKey("file_type.id"))
     apply_user_id = db.Column(db.Integer, db.ForeignKey("users.id"), comment='申请人')
     apply_at = db.Column(db.DateTime, default=datetime.datetime.now)
     apply_reason = db.Column(db.String(200), comment='申请理由')
@@ -112,32 +123,6 @@ class Role(db.Model):
         return '<Role %r>' % self.name
 
 
-class Post(db.Model):
-    __tablename__ = 'posts'
-    id = db.Column(db.Integer, primary_key=True)
-    body = db.Column(db.Text)
-    alarm_id = db.Column(db.Integer)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.datetime.now)
-    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    body_html = db.Column(db.Text)
-    line_id = db.Column(db.Integer, db.ForeignKey('line_data_bank.id'))
-
-    @staticmethod
-    def on_changed_body(target, value, oldvalue, initiator):
-        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
-                        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
-                        'h1', 'h2', 'h3', 'p', 'img']
-        attrs = {
-            '*': ['class'],
-            'a': ['href', 'rel'],
-            'img': ['src', 'alt', 'width', 'height'],
-        }
-        target.body_html = bleach.clean(value, tags=allowed_tags, attributes=attrs, strip=True)
-
-
-db.event.listen(Post.body, 'set', Post.on_changed_body)
-
-
 class ApiConfigure(db.Model):
     __tablename__ = 'api_configure'
     id = db.Column(db.Integer, primary_key=True)
@@ -153,15 +138,9 @@ class User(UserMixin, db.Model):
     phoneNum = db.Column(db.String(15), unique=True)
     username = db.Column(db.String(64), index=True)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
-    area = db.Column(db.Integer, db.ForeignKey('area.id'))
-    duty = db.Column(db.Integer, db.ForeignKey('job_desc.job_id'))
-    permit_machine_room = db.Column(db.String(200), index=True)
+    permit_file_type = db.Column(db.String(200), index=True)
     password_hash = db.Column(db.String(128))
     status = db.Column(db.SmallInteger)
-    post = db.relationship('Post', backref='author', lazy='dynamic')
-    lines = db.relationship('LineDataBank', backref='operator', lazy='dynamic')
-    supplier = db.relationship('IPSupplier', backref='supplier_operator', lazy='dynamic')
-    sms_order = db.relationship('SMSOrder', backref='sms_sender', lazy='dynamic')
     applied_orders = db.relationship('TransferOrders', backref='apply_user',
                                      foreign_keys='TransferOrders.apply_user_id',
                                      lazy='dynamic')

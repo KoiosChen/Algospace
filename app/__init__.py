@@ -10,10 +10,8 @@ import logging
 import redis
 from collections import defaultdict
 import queue
-from app.MyModule import Snmp
 from flask_sqlalchemy import SQLAlchemy as SQLAlchemyBase
 from sqlalchemy.pool import NullPool
-import multiprocessing
 from fdfs_client.client import *
 import os
 
