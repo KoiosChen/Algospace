@@ -12,7 +12,8 @@ var DropzoneUploadFile = function () {
             maxFilesize: 2000, // MB
             addRemoveLinks: true,
             autoProcessQueue: false,
-            timeout: 9000,
+            parallelUploads: 100,
+            timeout: 300000,
             url: 'upload_inside_fdfs',
             init: function () {
                 myDropzone = this;
