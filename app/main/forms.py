@@ -4,7 +4,7 @@ from wtforms.validators import DataRequired, Email, Length, Regexp, EqualTo, IPA
 from wtforms import StringField, SubmitField, PasswordField, SelectField, SelectMultipleField, DateTimeField, \
     RadioField, TextAreaField
 from flask_pagedown.fields import PageDownField
-from ..models import Role
+from ..models import Roles
 from ..my_func import get_machine_room_by_area, get_device_name
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 
@@ -62,7 +62,7 @@ class UserModal(Form):
 
     def __init__(self):
         super(UserModal, self).__init__()
-        role_c = [(str(k.id), k.name) for k in Role.query.all()]
+        role_c = [(str(k.id), k.name) for k in Roles.query.all()]
         role_c.append(('0', None))
         self.role.choices = role_c
         self.machine_room_name.choices = get_machine_room_by_area(session.get('permit_machine_room'))

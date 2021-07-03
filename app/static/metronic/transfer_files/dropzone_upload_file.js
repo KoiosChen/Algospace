@@ -1,7 +1,5 @@
 //== Class definition
 
-var dropzone_cutover;
-
 var DropzoneUploadFile = function () {
     //== Private functions
     let transfer_upload_file = function () {
@@ -28,9 +26,13 @@ var DropzoneUploadFile = function () {
                 console.log('transfer from inside to outside');
 
                 let apply_reason = $('#apply_reason').val();
+                let apply_type = $('#apply_type').val();
+                let share_to = $('#m_select2_3').val();
 
                 let params = {
                     "apply_reason": apply_reason,
+                    "apply_type": apply_type,
+                    "share_to": share_to
                 };
 
                 console.log(params);
@@ -45,8 +47,7 @@ var DropzoneUploadFile = function () {
                         if (result.status === 'true') {
                             mApp.unblock('#modal_transfer .modal-content');
                             $("#modal_transfer").modal('hide');
-                            $('#ajax_data').mDatatable().destroy();
-                            DatatableRemoteAjaxTransferFiles.init();
+                            transfer_table.draw(false);
                             toastr.info(result.content);
                             //setTimeout("location.reload()", 1000);
                         } else {

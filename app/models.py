@@ -2,11 +2,9 @@ from flask import current_app
 from . import db
 from flask_login import UserMixin, AnonymousUserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy import UniqueConstraint
 from . import login_manager
 import datetime
 import os
-import bleach
 import uuid
 import re
 import random
@@ -14,7 +12,7 @@ import random
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return Users.query.get(int(user_id))
 
 
 def make_uuid():
@@ -34,32 +32,50 @@ def make_order_id(prefix=None):
     return rtn if prefix is None else prefix + rtn
 
 
+transfer_sendto = db.Table('transfer_sendto',
+                           db.Column('transfer_order_id', db.String(64), db.ForeignKey('transfer_orders.id'),
+                                     primary_key=True),
+                           db.Column('user_id', db.Integer, db.ForeignKey('users.id'),
+                                     primary_key=True))
+
+
 class Permission:
-    FOLLOW = 0x01
-    COMMENT = 0x02
-    WRITE_ARTICLES = 0x04
-    MODERATE_COMMENTS = 0x08
-    REGION_SUPPORT = 0x10
-    MAN_ON_DUTY = 0x20
-    NETWORK_MANAGER = 0x40
-    ADMINISTER = 0x80
+    USER = 0x01
+    LEADER = 0x02
+    OPERATOR = 0x20
+    SUPER_OPERATOR = 0x40
+    ADMINISTRATOR = 0x80
 
 
-class FileType(db.Model):
+class FileTypes(db.Model):
     """
     文件类型
     """
-    __tablename__ = 'file_type'
+    __tablename__ = 'file_types'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20), nullable=False, index=True)
     order = db.Column(db.SmallInteger, default=1, index=True, comment='当有排序时')
+    permit_value = db.Column(db.String(200), index=True)
+
+
+class ApplyTypes(db.Model):
+    """
+    申请类型
+    """
+    __tablename__ = 'apply_types'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(20), nullable=False, index=True)
+    desc = db.Column(db.String(200))
+    order = db.Column(db.SmallInteger, default=1, index=True, comment='当有排序时')
+    permit_value = db.Column(db.String(200), index=True)
+    transfer_orders = db.relationship("TransferOrders", backref='apply_type', lazy='dynamic')
 
 
 class TransferOrders(db.Model):
     __tablename__ = 'transfer_orders'
     id = db.Column(db.String(64), primary_key=True, default=make_order_id)
     filename = db.Column(db.String(100), index=True)
-    file_type_id = db.Column(db.Integer, db.ForeignKey("file_type.id"))
+    apply_type_id = db.Column(db.Integer, db.ForeignKey("apply_types.id"))
     apply_user_id = db.Column(db.Integer, db.ForeignKey("users.id"), comment='申请人')
     apply_at = db.Column(db.DateTime, default=datetime.datetime.now)
     apply_reason = db.Column(db.String(200), comment='申请理由')
@@ -71,49 +87,36 @@ class TransferOrders(db.Model):
     confirm_at = db.Column(db.DateTime)
     delete_at = db.Column(db.DateTime)
 
+    sendto = db.relationship('Users', secondary=transfer_sendto, backref=db.backref('send_me_transfer_orders'))
 
-class Role(db.Model):
+
+class Roles(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
     default = db.Column(db.Boolean, default=False, index=True)
     permissions = db.Column(db.Integer)
-    users = db.relationship('User', backref='role', lazy='dynamic')
+    users = db.relationship('Users', backref='role', lazy='dynamic')
 
     @staticmethod
     def insert_roles():
         roles = {
-            'User': (Permission.FOLLOW |
-                     Permission.COMMENT |
-                     Permission.WRITE_ARTICLES, True),
-            'Moderator': (Permission.FOLLOW |
-                          Permission.COMMENT |
-                          Permission.WRITE_ARTICLES |
-                          Permission.MODERATE_COMMENTS, False),
-            'REGION': (Permission.FOLLOW |
-                       Permission.COMMENT |
-                       Permission.WRITE_ARTICLES |
-                       Permission.MODERATE_COMMENTS |
-                       Permission.REGION_SUPPORT, False),
-            'MAN_ON_DUTY': (Permission.FOLLOW |
-                            Permission.COMMENT |
-                            Permission.WRITE_ARTICLES |
-                            Permission.MODERATE_COMMENTS |
-                            Permission.REGION_SUPPORT |
-                            Permission.MAN_ON_DUTY, False),
-            'SNOC': (Permission.FOLLOW |
-                     Permission.COMMENT |
-                     Permission.WRITE_ARTICLES |
-                     Permission.MODERATE_COMMENTS |
-                     Permission.REGION_SUPPORT |
-                     Permission.MAN_ON_DUTY |
-                     Permission.NETWORK_MANAGER, False),
+            'User': (Permission.USER, True),
+            'Leader': (Permission.USER |
+                       Permission.LEADER, False),
+            'Operator': (Permission.USER |
+                         Permission.LEADER |
+                         Permission.OPERATOR, False),
+            'SuperOperator': (Permission.USER |
+                              Permission.LEADER |
+                              Permission.OPERATOR |
+                              Permission.SUPER_OPERATOR, False),
             'Administrator': (0xff, False)
         }
         for r in roles:
-            role = Role.query.filter_by(name=r).first()
+            role = Roles.query.filter_by(name=r).first()
             if role is None:
-                role = Role(name=r)
+                role = Roles(name=r)
             role.permissions = roles[r][0]
             role.default = roles[r][1]
             db.session.add(role)
@@ -123,15 +126,7 @@ class Role(db.Model):
         return '<Role %r>' % self.name
 
 
-class ApiConfigure(db.Model):
-    __tablename__ = 'api_configure'
-    id = db.Column(db.Integer, primary_key=True)
-    api_name = db.Column(db.String(20), nullable=False)
-    api_params = db.Column(db.String(100), nullable=False)
-    api_params_value = db.Column(db.String(200))
-
-
-class User(UserMixin, db.Model):
+class Users(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(64), unique=True, index=True)
@@ -149,12 +144,12 @@ class User(UserMixin, db.Model):
                                        lazy='dynamic')
 
     def __init__(self, **kwargs):
-        super(User, self).__init__(**kwargs)
+        super(Users, self).__init__(**kwargs)
         if self.role is None:
             if self.email == current_app.config['FLASKY_ADMIN']:
-                self.role = Role.query.filter_by(permissions=0xff).first()
+                self.role = Roles.query.filter_by(permissions=0xff).first()
             if self.role is None:
-                self.role = Role.query.filter_by(default=True).first()
+                self.role = Roles.query.filter_by(default=True).first()
 
     @property
     def password(self):
@@ -172,19 +167,19 @@ class User(UserMixin, db.Model):
                (self.role.permissions & permissions) == permissions
 
     def is_administrator(self):
-        return self.can(Permission.ADMINISTER)
+        return self.can(Permission.ADMINISTRATOR)
 
-    def is_moderate(self):
-        return self.can(Permission.MODERATE_COMMENTS)
+    def is_super_operator(self):
+        return self.can(Permission.SUPER_OPERATOR)
 
-    def is_region(self):
-        return self.can(Permission.REGION_SUPPORT)
+    def is_operator(self):
+        return self.can(Permission.OPERATOR)
 
-    def is_manonduty(self):
-        return self.can(Permission.MAN_ON_DUTY)
+    def is_leader(self):
+        return self.can(Permission.LEADER)
 
-    def is_snoc(self):
-        return self.can(Permission.NETWORK_MANAGER)
+    def is_user(self):
+        return self.can(Permission.USER)
 
     def __repr__(self):
         return '<User %r>' % self.username
