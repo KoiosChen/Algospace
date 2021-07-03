@@ -1,6 +1,6 @@
 from app import logger
 from .process_datetime import format_daterange
-from app.models import TransferOrders, Users
+from app.models import TransferOrders, Users, ApplyTypes
 from sqlalchemy.sql import func
 from sqlalchemy.orm import aliased
 from sqlalchemy import or_, and_
@@ -31,6 +31,7 @@ def search_sql(post_data, advance=None):
 
     apply_users = aliased(Users)
     confirm_users = aliased(Users)
+    apply_types = aliased(ApplyTypes)
 
     if len(search_field) == 0:
         search_field = ["filename", "apply_user", "confirm_result", "confirm_user"]
@@ -45,10 +46,16 @@ def search_sql(post_data, advance=None):
                 base_sql = base_sql.outerjoin(apply_users, apply_users.id == TransferOrders.apply_user_id)
                 or_fields_list.append(apply_users.username.contains(search_content))
             elif f == 'confirm_result':
-                concat_fields.append(func.ifnull(TransferOrders.confirm_result, ''))
+                if search_content in "通过":
+                    or_fields_list.append(TransferOrders.confirm_result.__eq__(1))
+                elif search_content in "拒绝":
+                    or_fields_list.append(TransferOrders.confirm_result.__eq__(0))
             elif f == 'confirm_user':
                 base_sql = base_sql.outerjoin(confirm_users, confirm_users.id == TransferOrders.confirm_user_id)
                 or_fields_list.append(confirm_users.username.contains(search_content))
+            elif f == 'apply_type':
+                base_sql = base_sql.outerjoin(apply_types, apply_types.id == TransferOrders.apply_type_id)
+                or_fields_list.append(apply_types.name.contains(search_content))
 
     if advance is None:
         fuzzy_sql = or_(func.concat(*concat_fields).contains(search_content),

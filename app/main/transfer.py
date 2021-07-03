@@ -11,8 +11,9 @@ from app.auth.views import ldap_query_info
 
 Search_Fields = [['文件名称', 'filename'],
                  ['申请人', 'apply_user'],
+                 ['申请类型', 'apply_type'],
                  ['审核结果', 'confirm_result'],
-                 ['审核人', 'confirm_user']
+                 ['审核人', 'confirm_user'],
                  ]
 
 
@@ -72,7 +73,7 @@ def transfer_confirm_action():
             for share in order.sendto:
                 logger.debug(share.email)
                 send_list.append(share.email)
-            SM = sendmail(subject="[TRANSFER]" + order.filename  + "_" + order.id, mail_to=send_list)
+            SM = sendmail(subject="[Transfer]" + order.filename  + "_" + order.id, mail_to=send_list)
             SM.send(content=mail_content)
         return jsonify({'status': 'OK', 'content': '操作成功'})
     except Exception as e:
