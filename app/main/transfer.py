@@ -70,8 +70,9 @@ def transfer_confirm_action():
             send_list = list()
             send_list.append(order.email)
             for share in order.sendto:
-                logger.debug(ldap_query_info(share.username))
-            SM = sendmail(subject=order.id + "_" + order.filename, mail_to=order.email)
+                logger.debug(share.email)
+                send_list.append(share.email)
+            SM = sendmail(subject="[TRANSFER]" + order.filename  + "_" + order.id, mail_to=send_list)
             SM.send(content=mail_content)
         return jsonify({'status': 'OK', 'content': '操作成功'})
     except Exception as e:
