@@ -7,10 +7,10 @@ var FormControlsSendmail = function () {
         $("#m_form_excel").validate({
             // define validation rules
             rules: {
-                title: {
+                apply_type: {
                     required: true
                 },
-                daterange: {
+                apply_reason: {
                     required: true
                 }
             },

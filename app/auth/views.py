@@ -1,6 +1,6 @@
 from flask import render_template, redirect, request, url_for, flash, session, jsonify
 from flask_login import login_user, logout_user, login_required
-from ..models import User
+from ..models import Users
 from . import auth
 from .. import logger
 from ldap3 import Server, Connection, SUBTREE
@@ -10,13 +10,29 @@ ldap_port = 389  # 默认389
 ldap_base_search = 'ou=Users,ou=Office,dc=algospace,dc=org'  # 查询域
 
 
+def ldap_query_info(username):
+    server = Server(ldap_host, port=ldap_port, use_ssl=False)
+    ldapz_admin_connection = Connection(server, user='ALGOSPACE\\ldap_bind', password='Tmp12345', auto_bind=True,
+                                        authentication='NTLM')
+    print(ldapz_admin_connection)
+
+    # 这个是为了查询你输入的用户名的入口搜索地址
+    res = ldapz_admin_connection.search(search_base=ldap_base_search,
+                                        search_filter='(sAMAccountName={})'.format(username),
+                                        search_scope=SUBTREE,
+                                        attributes=['cn', 'givenName', 'mail', 'sAMAccountName'],
+                                        )
+
+    return res
+
+
 def ldap_auth(username, password):
-    '''
+    """
     ldap验证方法
     :param username: 用户名
     :param password: 密码
     :return:
-    '''
+    """
 
     server = Server(ldap_host, port=ldap_port, use_ssl=False)
     ldapz_admin_connection = Connection(server, user='ALGOSPACE\\ldap_bind', password='Tmp12345', auto_bind=True, authentication='NTLM')
@@ -68,7 +84,7 @@ def login():
         password = request.form.get('password')
         remember_me = request.form.get('remember_me')
         logger.warning('Somebody is trying to login as {}'.format(fullname))
-        user = User.query.filter_by(username=fullname, status=1).first()
+        user = Users.query.filter_by(username=fullname, status=1).first()
         result = ldap_auth(fullname, password)
         if result:
             session.permanent = True
@@ -77,7 +93,6 @@ def login():
             session['LOGINNAME'] = result['givenName']
             session['SELFEMAIL'] = result['mail']
             session['ROLE'] = user.role_id
-            session['DUTY'] = user.duty
             session['SELFID'] = user.id
             login_user(user, remember_me)
             return redirect(request.args.get('next') or url_for('main.index'))

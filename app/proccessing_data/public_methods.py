@@ -1,7 +1,7 @@
 from flask import jsonify, session
 from app import db, logger, fdfs_client
-from ...models import *
-from ...validate.verify_fields import verify_fields, chain_add_validate, verify_required, verify_network, \
+from app.models import *
+from app.validate.verify_fields import verify_fields, chain_add_validate, verify_required, verify_network, \
     verify_net_in_net
 import re
 import datetime

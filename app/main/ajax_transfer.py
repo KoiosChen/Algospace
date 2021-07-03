@@ -3,123 +3,59 @@ from flask_login import login_required
 from ..models import Permission, TransferOrders, FILE_URL
 from ..decorators import permission_required
 from . import main
+from app import logger
+from app.proccessing_data.make_tables import make_table_transfer_orders, make_table_confirm_transfer_orders
+from app.MyModule.prepare_sql import search_sql
 
 
-@main.route('/transfer_orders', methods=['GET', 'POST'])
+@main.route('/transfer_orders', methods=['POST'])
 @login_required
-@permission_required(Permission.REGION_SUPPORT)
+@permission_required(Permission.USER)
 def transfer_orders():
-    if request.method == 'POST':
-        page_start = (int(request.form.get('datatable[pagination][page]', '0')) - 1) * 10
-        length = int(request.form.get('datatable[pagination][perpage]'))
+    records_total, search_result = search_sql(request.form, TransferOrders.apply_user_id.__eq__(session['SELFID']))
+    logger.info('Making transfer_orders table')
+    data = make_table_transfer_orders(lines=search_result)
 
-        data = [{'id': order.id,
-                 'filename': order.filename,
-                 'apply_user': order.apply_user.username if order.apply_user else '',
-                 'apply_reason': order.apply_reason,
-                 'file_store_path': FILE_URL + '/' + order.file_store_path,
-                 'email': order.email,
-                 'apply_at': order.apply_at,
-                 'confirm_user': order.confirm_user.username if order.confirm_user else '',
-                 'confirm_result': order.confirm_result,
-                 'confirm_reason': order.confirm_reason,
-                 'confirm_at': order.confirm_at
-                 }
-                for order in
-                TransferOrders.query.filter(TransferOrders.apply_user_id.__eq__(session['SELFID'])).order_by(
-                    TransferOrders.apply_at.desc()).offset(page_start).limit(length)]
-
-        recordsTotal = TransferOrders.query.count()
-
-        rest = {
-            "meta": {
-                "page": int(request.form.get('datatable[pagination][page]')),
-                "pages": int(recordsTotal) / int(length),
-                "perpage": int(length),
-                "total": int(recordsTotal),
-                "sort": "asc",
-                "field": "ShipDate"
-            },
-            "data": data
-        }
-        return jsonify(rest)
+    return jsonify({
+        "draw": int(request.form.get('draw')),
+        "recordsTotal": records_total,
+        "recordsFiltered": records_total,
+        "data": data,
+        "options": [],
+        "files": []
+    })
 
 
-@main.route('/transfer_confirm_orders', methods=['GET', 'POST'])
+@main.route('/transfer_confirm_orders', methods=['POST'])
 @login_required
-@permission_required(Permission.MAN_ON_DUTY)
+@permission_required(Permission.OPERATOR)
 def transfer_confirm_orders():
-    if request.method == 'POST':
-        page_start = (int(request.form.get('datatable[pagination][page]', '0')) - 1) * 10
-        length = int(request.form.get('datatable[pagination][perpage]'))
+    records_total, search_result = search_sql(request.form, TransferOrders.confirm_result.__eq__(None))
+    logger.info('To make table')
+    data = make_table_confirm_transfer_orders(lines=search_result)
 
-        data = [{'id': order.id,
-                 'filename': order.filename,
-                 'apply_user': order.apply_user.username if order.apply_user else '',
-                 'apply_reason': order.apply_reason,
-                 'file_store_path': FILE_URL + '/' + order.file_store_path,
-                 'email': order.email,
-                 'apply_at': order.apply_at,
-                 'confirm_user': order.confirm_user.username if order.confirm_user else '',
-                 'confirm_result': order.confirm_result,
-                 'confirm_reason': order.confirm_reason,
-                 'confirm_at': order.confirm_at
-                 }
-                for order in
-                TransferOrders.query.filter(TransferOrders.confirm_result.__eq__(None)).order_by(
-                    TransferOrders.apply_at.desc()).offset(page_start).limit(length)]
-
-        recordsTotal = TransferOrders.query.count()
-
-        rest = {
-            "meta": {
-                "page": int(request.form.get('datatable[pagination][page]')),
-                "pages": int(recordsTotal) / int(length),
-                "perpage": int(length),
-                "total": int(recordsTotal),
-                "sort": "asc",
-                "field": "ShipDate"
-            },
-            "data": data
-        }
-        return jsonify(rest)
+    return jsonify({
+        "draw": int(request.form.get('draw')),
+        "recordsTotal": records_total,
+        "recordsFiltered": records_total,
+        "data": data,
+        "options": [],
+        "files": []
+    })
 
 
-@main.route('/transfer_confirmed_orders', methods=['GET', 'POST'])
+@main.route('/transfer_confirmed_orders', methods=['POST'])
 @login_required
-@permission_required(Permission.MAN_ON_DUTY)
+@permission_required(Permission.OPERATOR)
 def transfer_confirmed_orders():
-    if request.method == 'POST':
-        page_start = (int(request.form.get('datatable[pagination][page]', '0')) - 1) * 10
-        length = int(request.form.get('datatable[pagination][perpage]'))
+    records_total, search_result = search_sql(request.form, TransferOrders.confirm_result.__ne__(None))
+    data = make_table_confirm_transfer_orders(lines=search_result)
 
-        data = [{'id': order.id,
-                 'filename': order.filename,
-                 'apply_user': order.apply_user.username if order.apply_user else '',
-                 'apply_reason': order.apply_reason,
-                 'file_store_path': FILE_URL + '/' + order.file_store_path,
-                 'email': order.email,
-                 'apply_at': order.apply_at,
-                 'confirm_user': order.confirm_user.username if order.confirm_user else '',
-                 'confirm_result': order.confirm_result,
-                 'confirm_reason': order.confirm_reason,
-                 'confirm_at': order.confirm_at
-                 }
-                for order in
-                TransferOrders.query.filter(TransferOrders.confirm_result.__ne__(None)).order_by(
-                    TransferOrders.apply_at.desc()).offset(page_start).limit(length)]
-
-        recordsTotal = TransferOrders.query.count()
-
-        rest = {
-            "meta": {
-                "page": int(request.form.get('datatable[pagination][page]')),
-                "pages": int(recordsTotal) / int(length),
-                "perpage": int(length),
-                "total": int(recordsTotal),
-                "sort": "asc",
-                "field": "ShipDate"
-            },
-            "data": data
-        }
-        return jsonify(rest)
+    return jsonify({
+        "draw": int(request.form.get('draw')),
+        "recordsTotal": records_total,
+        "recordsFiltered": records_total,
+        "data": data,
+        "options": [],
+        "files": []
+    })

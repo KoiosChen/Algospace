@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 import os
 from app import create_app, db
-from app.models import User, Role
+from app.models import Users, Roles
 from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
 
 __author__ = 'Koios'
 
-app = create_app(os.getenv('FLASK_CONFIG') or 'production')
+app = create_app(os.getenv('FLASK_CONFIG') or 'development')
 manager = Manager(app)
 migrate = Migrate(app, db)
 
 
 def make_shell_context():
-    return dict(app=app, db=db, User=User, Role=Role)
+    return dict(app=app, db=db, User=Users, Role=Roles)
 
 
 manager.add_command("shell", Shell(make_context=make_shell_context))

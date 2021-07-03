@@ -57,8 +57,79 @@
                 </div>
             </div>
         </div>
+
         <div class="m-portlet__body">
-            <div class="m_datatable" id="ajax_data"></div>
+            <div class="form-group m-form__group row">
+                <label class="col-lg-1 col-form-label">
+                    搜索范围：
+                </label>
+                <div class="col-lg-2">
+                    <select class="form-control m-bootstrap-select m_selectpicker" multiple="" data-actions-box="true"
+                            tabindex="-98" id="search_field">
+                        {% for op in search_fields %}
+                            <option value={{ op[1] }}>{{ op[0] }}</option>
+                        {% endfor %}
+                    </select>
+                    <span></span>
+                </div>
+                <div class="col-lg-3">
+                    <input class="form-control m-input" type="text" placeholder="搜索内容" id="search_content">
+                    <span></span>
+                </div>
+                <div class="col-lg-1">
+                    <select class="form-control m-bootstrap-select m_selectpicker"
+                            title="选择日期范围" id="select_date_field"
+                            tabindex="-98" id="search_field_date">
+                        <option value="apply_at">申请日期</option>
+                        <option value="confirm_at">审核日期</option>
+                    </select>
+                    <span></span>
+                </div>
+                <div class="input-group col-lg-3 col-md-9 col-sm-12" id="search_m_daterange">
+                    <input type="text" class="form-control m-input" readonly="" name="search_daterange" id="search_daterange"
+                           placeholder="选择时间范围">
+                    <div class="input-group-append">
+                                    <span class="input-group-text">
+                                        <i class="la la-calendar-check-o"></i>
+                                    </span>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <button type="button" class="btn btn-danger" id="clear_all_data">
+                                清空
+                            </button>
+                    <button type="submit" class="btn btn-brand" id="search_submit">
+                        搜索
+                    </button>
+                    <span></span>
+                </div>
+            </div>
+            <table id="transfer_confirm_orders_id" class="display nowrap" style="width:100%">
+                <thead>
+                <tr>
+                    <th>订单号</th>
+                    <th>文件名称</th>
+                    <th>申请人</th>
+                    <th>申请理由</th>
+                    <th>申请类型</th>
+                    <th>申请时间</th>
+                    <th>共享</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tfoot>
+                <tr>
+                    <th>订单号</th>
+                    <th>文件名称</th>
+                    <th>申请人</th>
+                    <th>申请理由</th>
+                    <th>申请类型</th>
+                    <th>申请时间</th>
+                    <th>共享</th>
+                    <th>操作</th>
+                </tr>
+                </tfoot>
+            </table>
         </div>
     </div>
 
@@ -68,58 +139,24 @@
 
 {% block scripts %}
     {{ super() }}
+    <link rel="stylesheet" type="text/css" href="../static/mycss/datatable/jquery.dataTables.min.css">
+
+    <script type="text/javascript" charset="utf8" src="../static/datatable/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="../static/datatable/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="../static/datatable/dataTables.select.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="../static/datatable/showdown.min.js"></script>
+    <script src="../static/js/moment.min.js"></script>
+    <script src="../static/js/daterangepicker.js"></script>
+    <script src="../static/metronic/bootstrap-daterangepicker.js" type="text/javascript"></script>
+    <script src="../static/metronic-default/assets/demo/default/custom/components/forms/widgets/bootstrap-select.js"
+            type="text/javascript"></script>
+
+    <script src="../static/metronic-default/assets/demo/default/custom/components/portlets/tools.js"
+            type="text/javascript"></script>
+    <script src="../static/datatable/mylang.js" type="text/javascript"></script>
+
+    <script src="../static/metronic/transfer_files/transfer_confirm_orders.js" type="text/javascript"></script>
     <script>
-        $("#newOne").click(function () {
-            $("#add_machine_room").removeData("bs.modal").modal('show');
-            $("#m_repeater_3 :input").bind("input propertychange", repeat_input);
-        });
-
-        $('#m_daterangepicker_fromexcel').on('cancel.daterangepicker', function (ev, picker) {
-            //do something, like clearing an input
-            $('input[name="daterange"]').val('');
-        });
-
-        $("#mail_from_excel").click(function () {
-            $("#modal_transfer").removeData("bs.modal").modal('show');
-        });
-
-        $("#sendmail").click(function () {
-            console.log('sending mail');
-            DatatableRemoteAjaxCustomer.multiselect();
-        });
-
-        // toastr options
-        toastr.options = {
-            "closeButton": true, //是否显示关闭按钮
-            "debug": false, //是否使用debug模式
-            "progressBar": false,
-            "positionClass": "toast-top-center",//弹出窗的位置
-            "showDuration": "2000",//显示的动画时间
-            "hideDuration": "1000",//消失的动画时间
-            "timeOut": "2000", //展现时间
-            "extendedTimeOut": "1000",//加长展示时间
-            "showEasing": "swing",//显示时的动画缓冲方式
-            "hideEasing": "linear",//消失时的动画缓冲方式
-            "showMethod": "fadeIn",//显示时的动画方式
-            "hideMethod": "fadeOut" //消失时的动画方式
-        };
-
-        $("#clear_all_data").click(function () {
-            if (confirm("是否确认清空数据？")) {
-                $("#cutover_title_2").val("");
-                $("input[name$='][A]']").val("");
-                $("input[name$='][Z]']").val("");
-                $('input[name="daterange"]').val('');
-
-                $("#cutover_reason_2").val("");
-                $("#cutover_duration_2").val("");
-                $("#emergency_2").prop("checked", false);
-                $("#m_datepicker_1_modal_2").val("");
-                $('#m_form_excel_msg').addClass('m--hide').hide();
-                $("div.form-control-feedback").remove();
-            }
-        });
-
         function HTMerConfirm(sc_id, action) {
             if (confirm("确定操作吗")) {
                 let params = {"sc_id": sc_id, "action": action};
@@ -132,10 +169,8 @@
                     success: function (msg) {
                         if (msg.status === 'OK') {
                             toastr.info(msg.content);
-                            $('#ajax_data').mDatatable().destroy();
-                            DatatableRemoteAjaxTransferFilesConfirm.init();
-                        }
-                        else {
+                            transfer_confirm_table.draw(false);
+                        } else {
                             toastr.warning(msg.content);
                         }
                     },
@@ -147,45 +182,5 @@
                 toastr.warning('取消删除')
             }
         }
-
-
-        $('#update').on('shown.bs.modal', function () {
-            if (document.getElementsByName('postli').length > 0) {
-                setTimeout(show_jpage, 50);
-
-                function show_jpage() {
-                    $("div.holder").jPages({
-                        containerID: "itemContainer",
-                        perPage: 5
-                    });
-                }
-            }
-        });
-
-        //提交更改
-        function update() {
-            //获取模态框数据
-            var alarm_id = $('#id').val();
-            var body = $('#flask-pagedown-body').val();
-            if (body) {
-                $.ajax({
-                    type: "POST",
-                    url: "post_body",
-                    data: "&alarm_id=" + alarm_id + "&body=" + body,
-                    dataType: 'html',
-                    contentType: "application/x-www-form-urlencoded; charset=utf-8",
-                    success: function (result) {
-                        toastr.info('提交成功')
-                        setTimeout("location.reload()", 1000);
-                    },
-                    error: function (xhr, msg, e) {
-                        toastr.warning("系统繁忙");
-                    }
-                });
-            } else {
-                toastr.warning("未输入任何内容")
-            }
-        }
     </script>
-    <script src="../static/metronic/transfer_files/transfer_confirm_orders.js" type="text/javascript"></script>
 {% endblock %}
