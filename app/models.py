@@ -225,3 +225,5 @@ REQUEST_RETRY_TIMES = 1
 REQUEST_RETRY_TIMES_PER_TIME = 1
 
 FILE_URL = "http://fdfs.algospace.net"
+
+BotHook = {"Transfer Notification": "http://mattermost.algospace.net/hooks/3akzy76ugbdi3esej4pgyou8ph"}
