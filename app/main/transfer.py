@@ -75,7 +75,7 @@ def transfer_confirm_action():
                 send_list.append(share.email)
             SM = sendmail(subject="[Transfer]" + order.filename  + "_" + order.id, mail_to=send_list)
             SM.send(content=mail_content)
-            bot_hook(BotHook['Transfer Notification'], f"You have a new application from {order.apply_user.username}.")
+            # bot_hook(BotHook['Transfer Notification'], f"You have a new application from {order.apply_user.username}.")
         return jsonify({'status': 'OK', 'content': '操作成功'})
     except Exception as e:
         logger.error(f'confirm order {order.id} fail:{str(e)}')
@@ -118,6 +118,7 @@ def apply_transfer():
                     new_order['obj'].sendto.append(Users.query.get(id))
             session['s_upload_fdfs'] = ""
             db.session.commit()
+            bot_hook(BotHook['Transfer Notification'], f"You have a new application from {session['LOGINUSER']}.")
             return jsonify({'status': 'true', "content": "文件传输申请提交成功"})
         else:
             return jsonify({'status': 'false', "content": "文件传输申请提交失败"})
