@@ -1,13 +1,13 @@
 from flask import session, render_template, request, jsonify
 from flask_login import login_required
-from ..models import Permission, TransferOrders, FILE_URL, Users, ApplyTypes, Roles
+from ..models import Permission, TransferOrders, FILE_URL, Users, ApplyTypes, Roles, BotHook
 from ..decorators import permission_required
 from .. import logger, db
 from . import main
 from app.proccessing_data.public_methods import upload_fdfs, new_data_obj
 import datetime
 from app.MyModule.SendMail import sendmail
-from app.auth.views import ldap_query_info
+from app.main.mattermost import bot_hook
 
 Search_Fields = [['文件名称', 'filename'],
                  ['申请人', 'apply_user'],
@@ -75,6 +75,7 @@ def transfer_confirm_action():
                 send_list.append(share.email)
             SM = sendmail(subject="[Transfer]" + order.filename  + "_" + order.id, mail_to=send_list)
             SM.send(content=mail_content)
+            bot_hook(BotHook['Transfer Notification'], f"You have a new application from {order.apply_user.username}.")
         return jsonify({'status': 'OK', 'content': '操作成功'})
     except Exception as e:
         logger.error(f'confirm order {order.id} fail:{str(e)}')
