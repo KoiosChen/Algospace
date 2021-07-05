@@ -20,8 +20,6 @@ class Config:
 
     UPLOADED_FILES_DEST = '/Users/Peter/Desktop/uploads'
 
-    # FLASKY_ADMIN = os.environ.get('FLASKY_ADMIN')
-
     @staticmethod
     def init_app(app):
         pass
