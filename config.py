@@ -1,4 +1,5 @@
 import os
+from redis import Redis
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -8,12 +9,14 @@ class Config:
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     SESSION_TYPE = 'redis'
+    SESSION_REDIS = Redis(host='127.0.0.1', port=6379)
     SESSION_KEY_PREFIX = 'flask_session:'
-    SESSION_PERMANENT = True
+    SESSION_PERMANENT = False
+    PERMANENT_SESSION_LIFETIME = 3600
     SESSION_USE_SIGNER = True
 
     SQLALCHEMY_POOL_RECYCLE = 1800
-    FLASKY_ADMIN = 'peter.chen@mbqianbao.com'
+    FLASKY_ADMIN = 'jinzhang.chen@algospace.com'
 
     UPLOADED_FILES_DEST = '/Users/Peter/Desktop/uploads'
 
@@ -43,10 +46,10 @@ class TestingConfig(Config):
 
 
 class ProductionConfig(Config):
-    DB_USERNAME = os.environ.get('DATABASE_USERNAME') or 'gamefast'
-    DB_PASSWORD = os.environ.get('DATABASE_PASSWORD') or '123123'
+    DB_USERNAME = os.environ.get('DATABASE_USERNAME') or 'algospace'
+    DB_PASSWORD = os.environ.get('DATABASE_PASSWORD') or 'Algo_1324_)(*'
     DB_HOST = os.environ.get('DATABASE_HOST') or '127.0.0.1'
-    DB_DATABASE = os.environ.get('DATABASE_DATABASE') or 'gamefast'
+    DB_DATABASE = os.environ.get('DATABASE_DATABASE') or 'algospace'
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://' + DB_USERNAME + ':' + DB_PASSWORD + '@' + DB_HOST + '/' + DB_DATABASE
 
 
