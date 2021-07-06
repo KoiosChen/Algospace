@@ -51,7 +51,7 @@ var DatatableConfirmTransferOrders = function () {
 };
 
 $(document).ready(function () {
-    let socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
+    let socket = io.connect('http://' + document.domain + ':' + location.port + '/algospace');
     socket.on('ws_flush_transfer_confirm_order', function (msg) {
         if (msg.content === 1) {
             console.log("flush table");
