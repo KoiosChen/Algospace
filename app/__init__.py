@@ -41,7 +41,7 @@ login_manager = LoginManager()
 scheduler = APScheduler()
 sess = Session()
 pagedown = PageDown()
-socketio = SocketIO()
+socketio = SocketIO(async_mode='gevent')
 
 
 login_manager.session_protection = 'strong'

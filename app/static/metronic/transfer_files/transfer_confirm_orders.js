@@ -51,15 +51,15 @@ var DatatableConfirmTransferOrders = function () {
 };
 
 $(document).ready(function () {
-    // let socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
-    // socket.on('ws_flush_transfer_confirm_order', function (msg) {
-    //     if (msg.content === 1) {
-    //         console.log("flush table");
-    //         if (transfer_confirm_table) {
-    //             transfer_confirm_table.ajax.reload();
-    //         }
-    //     }
-    // });
+    let socket = io.connect('http://' + document.domain + ':' + location.port + '/algospace');
+    socket.on('ws_flush_transfer_confirm_order', function (msg) {
+        if (msg.content === 1) {
+            console.log("flush table");
+            if (transfer_confirm_table) {
+                transfer_confirm_table.ajax.reload();
+            }
+        }
+    });
 
     $("#search_submit").click(function () {
         let search_field = $('#search_field').val();
