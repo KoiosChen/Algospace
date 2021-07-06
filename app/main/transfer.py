@@ -2,7 +2,7 @@ from flask import session, render_template, request, jsonify
 from flask_login import login_required
 from ..models import Permission, TransferOrders, FILE_URL, Users, ApplyTypes, Roles, BotHook
 from ..decorators import permission_required
-from .. import logger, db
+from .. import logger, db, socketio
 from . import main
 from app.proccessing_data.public_methods import upload_fdfs, new_data_obj
 import datetime
@@ -119,6 +119,7 @@ def apply_transfer():
             session['s_upload_fdfs'] = ""
             db.session.commit()
             bot_hook(BotHook['Transfer Notification'], f"You have a new application from {session['LOGINUSER']}.")
+            socketio.emit('ws_flush_transfer_confirm_order', {'content': 1}, namespace='/algospace')
             return jsonify({'status': 'true', "content": "文件传输申请提交成功"})
         else:
             return jsonify({'status': 'false', "content": "文件传输申请提交失败"})

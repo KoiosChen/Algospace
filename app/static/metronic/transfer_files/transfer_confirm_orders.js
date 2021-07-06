@@ -50,7 +50,17 @@ var DatatableConfirmTransferOrders = function () {
     return table;
 };
 
-jQuery(document).ready(function () {
+$(document).ready(function () {
+    let socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
+    socket.on('ws_flush_transfer_confirm_order', function (msg) {
+        if (msg.content === 1) {
+            console.log("flush table");
+            if (transfer_confirm_table) {
+                transfer_confirm_table.ajax.reload();
+            }
+        }
+    });
+
     $("#search_submit").click(function () {
         let search_field = $('#search_field').val();
         console.log(search_field);
@@ -72,8 +82,8 @@ jQuery(document).ready(function () {
     });
     $("#clear_all_data").click(function () {
         $("#search_content").val("");
-        $("#search_field").selectpicker('val',['noneSelectedText']);
-        $("#select_date_field").selectpicker('val',['noneSelectedText']);
+        $("#search_field").selectpicker('val', ['noneSelectedText']);
+        $("#select_date_field").selectpicker('val', ['noneSelectedText']);
         $("#search_daterange").val("");
     });
     transfer_confirm_table = DatatableConfirmTransferOrders();

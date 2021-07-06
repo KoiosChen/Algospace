@@ -9,6 +9,7 @@ from flask_pagedown import PageDown
 import logging
 import redis
 from collections import defaultdict
+from flask_socketio import SocketIO
 import queue
 from flask_sqlalchemy import SQLAlchemy as SQLAlchemyBase
 from sqlalchemy.pool import NullPool
@@ -40,6 +41,7 @@ login_manager = LoginManager()
 scheduler = APScheduler()
 sess = Session()
 pagedown = PageDown()
+socketio = SocketIO()
 
 
 login_manager.session_protection = 'strong'
@@ -76,6 +78,7 @@ def create_app(config_name):
     db.app = app
     db.init_app(app)
     db.create_scoped_session()
+    socketio.init_app(app)
     login_manager.init_app(app)
     scheduler.init_app(app)
     scheduler.start()
