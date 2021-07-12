@@ -1,12 +1,7 @@
 import threading
-import traceback
-
-from .. import logger, mailbox, redis_db
-import json
-import uuid
-import os
+from .. import logger, mailbox
 from .SendMail import sendmail
-impor traceback
+import traceback
 
 
 class StartThread(threading.Thread):
