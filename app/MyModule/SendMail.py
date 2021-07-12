@@ -5,6 +5,7 @@ from email.mime.application import MIMEApplication
 from email.mime.image import MIMEImage
 from email.header import Header
 from .. import logger, redis_db
+import traceback
 
 
 class sendmail:
@@ -76,5 +77,6 @@ class sendmail:
             logger.info(f">>> It is success to send the mail!")
             return True
         except Exception as e:
+            traceback.print_exc()
             logger.info(f">>> It is failed to send the mail for {e}!")
             return False
