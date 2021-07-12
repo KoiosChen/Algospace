@@ -48,10 +48,8 @@ login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
 
 # 用于处理订单建议书的队列
-work_q = queue.Queue(maxsize=100)
+mailbox = queue.Queue(maxsize=100)
 
-# 用于处理请求request的队列
-request_q = queue.Queue(maxsize=1000)
 
 logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %H:%M:%S')
 logger = logging.getLogger()

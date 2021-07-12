@@ -2,12 +2,12 @@ from flask import session, render_template, request, jsonify
 from flask_login import login_required
 from ..models import Permission, TransferOrders, FILE_URL, Users, ApplyTypes, Roles, BotHook
 from ..decorators import permission_required
-from .. import logger, db, socketio
+from .. import logger, db, mailbox, socketio
 from . import main
-from app.proccessing_data.public_methods import upload_fdfs, new_data_obj
+from ..proccessing_data.public_methods import upload_fdfs, new_data_obj
 import datetime
-from app.MyModule.SendMail import sendmail
-from app.main.mattermost import bot_hook
+from ..MyModule.SendMail import sendmail
+from ..main.mattermost import bot_hook
 
 Search_Fields = [['文件名称', 'filename'],
                  ['申请人', 'apply_user'],
@@ -49,11 +49,12 @@ def transfer_confirm_action():
     id_ = data.get('sc_id')
     action = data.get('action')
     order = TransferOrders.query.get(id_)
-    logger.debug(f'User {session["LOGINNAME"]} deny an apply order {id_} from inside to outside.')
+    logger.debug(f'User {session["LOGINNAME"]} action{action} an apply order {id_} from inside to outside.')
 
     try:
         # 0 means deny
-        if Roles.query.get(Users.query.get(session['SELFID']).role_id).name != 'Administrator' and order.apply_user_id == session['SELFID']:
+        if Roles.query.get(Users.query.get(session['SELFID']).role_id).name != 'Administrator' \
+                and order.apply_user_id == session['SELFID']:
             logger.debug(str(session['ROLE']) + ' ' + str(session['SELFID']))
             return jsonify({'status': 'fail', 'content': '非管理员，不可审核自己的申请'})
 
@@ -73,9 +74,8 @@ def transfer_confirm_action():
             for share in order.sendto:
                 logger.debug(share.email)
                 send_list.append(share.email)
-            SM = sendmail(subject="[Transfer]" + order.filename  + "_" + order.id, mail_to=send_list)
-            SM.send(content=mail_content)
-            # bot_hook(BotHook['Transfer Notification'], f"You have a new application from {order.apply_user.username}.")
+            subject = "[Transfer]" + order.filename + "_" + order.id
+            mailbox.put({"mail_to": send_list, "subject": subject, "content": mail_content})
         return jsonify({'status': 'OK', 'content': '操作成功'})
     except Exception as e:
         logger.error(f'confirm order {order.id} fail:{str(e)}')
@@ -127,4 +127,3 @@ def apply_transfer():
         db.session.rollback()
         session['s_upload_fdfs'] = ""
         return jsonify({'status': 'false', "content": str(e)})
-
