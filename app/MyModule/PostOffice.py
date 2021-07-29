@@ -35,6 +35,7 @@ class StartThread(threading.Thread):
                         self.queue.put(__mail)
                     else:
                         logger.debug(f'Mail sent!')
+                        redis_db.delete(str_mail)
             except Exception as e:
                 traceback.print_exc()
                 logger.error(str(e))
