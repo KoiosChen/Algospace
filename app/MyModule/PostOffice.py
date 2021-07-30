@@ -18,7 +18,7 @@ class StartThread(threading.Thread):
                 str_mail = json.dumps(__mail)
                 if not redis_db.exists(str_mail):
                     redis_db.set(str_mail, 0)
-                    redis_db.expire(3600)
+                    redis_db.expire(str_mail, 3600)
 
                 count = redis_db.get(str_mail)
 
@@ -31,7 +31,7 @@ class StartThread(threading.Thread):
                     distribution = sendmail(subject=__mail['subject'], mail_to=__mail['mail_to'])
                     if not distribution.send(content=__mail['content']):
                         redis_db.set(str_mail, count + 1)
-                        redis_db.expire(3600)
+                        redis_db.expire(str_mail, 3600)
                         self.queue.put(__mail)
                     else:
                         logger.debug(f'Mail sent!')
