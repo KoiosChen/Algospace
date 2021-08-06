@@ -20,8 +20,8 @@ class StartThread(threading.Thread):
                     redis_db.set(str_mail, 0)
                     redis_db.expire(3600)
 
-                count = redis_db.get(str_mail)
-
+                count_str = redis_db.get(str_mail)
+                count = eval(count_str)
                 if count > 3:
                     redis_db.delete(str_mail)
                 else:
