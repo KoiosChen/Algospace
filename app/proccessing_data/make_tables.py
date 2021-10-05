@@ -1,6 +1,9 @@
-from app.models import TransferOrders, FILE_URL
+from app.models import TransferOrders, FILE_URL, ConfigFiles, ConfigKeys, ConfigValues, result_dict
+import json
+from app.proccessing_data.public_methods import get_table_data, get_table_data_by_id
+from collections import defaultdict
 
-result_dict = {0: "拒绝", 1: "通过"}
+
 
 
 def make_table_transfer_orders(lines=None):
@@ -37,4 +40,51 @@ def make_table_confirm_transfer_orders(lines=None):
                "confirm_at": l.confirm_at if l.confirm_at else "",
                } for l in lines]
     print(result)
+    return result
+
+
+def make_table_config_files(config_file_id, key_id=None, raw=None):
+    if not key_id:
+        advance_search = [{"key": "config_file_id", "value": config_file_id, "operator": "__eq__"},
+                          {"key": "parent_id", "value": None, "operator": "__eq__"}]
+        all_keys = get_table_data(ConfigKeys, {}, appends=['children', 'my_values'], advance_search=advance_search)
+    else:
+        advance_search = [{"key": "config_file_id", "value": config_file_id, "operator": "__eq__"},
+                          {"key": "id", "value": key_id, "operator": "__eq__"},
+                          {"key": "parent_id", "value": None, "operator": "__eq__"}]
+        all_keys = get_table_data(ConfigKeys, {}, appends=['children', 'my_values'], advance_search=advance_search)
+
+    result = list()
+
+    def find_child(key_children):
+        list_record = defaultdict(dict)
+        for kc in key_children:
+            if kc.get('children'):
+                list_record[kc['order']][kc['name']] = find_child(kc.get('children'))
+            else:
+                list_record[kc['order']][kc['name']] = kc['my_values']
+        if len(list_record.keys()) == 1:
+            return_data = list_record.pop(0)
+        else:
+            return_data = list()
+            for k, v in list_record.items():
+                return_data.append(v)
+        return return_data
+
+    for k in all_keys['records']:
+        if k.get('children'):
+            x = find_child(k.get('children'))
+            result.append({"DT_RowId": "row_" + "1",
+                           "id": k["id"],
+                           "key": k["name"],
+                           "value": json.dumps(x) if raw is None else x,
+                           "version": k["version"],
+                           "status": k["status"], })
+        else:
+            result.append({"DT_RowId": "row_" + "1",
+                           "id": k["id"],
+                           "key": k["name"],
+                           "value": json.dumps(k["my_values"]) if raw is None else k["my_values"],
+                           "version": k["version"],
+                           "status": k["status"], })
     return result

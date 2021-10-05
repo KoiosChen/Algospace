@@ -23,7 +23,6 @@ var FormControlsSendmail = function () {
             },
 
             submitHandler: function (form) {
-
                 let queued_file_length = myDropzone.getQueuedFiles().length;
                 console.log(queued_file_length);
                 if (queued_file_length>0) {

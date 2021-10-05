@@ -1,8 +1,8 @@
 //== Class definition
 
-var DropzoneUploadFile = function () {
+var DropzoneUploadBundleConfigFile = function () {
     //== Private functions
-    let transfer_upload_file = function () {
+    let upload_bundle_config_file = function () {
         // file type validation
         Dropzone.options.mDropzone = {
             paramName: "file", // The name that will be used to transfer the file
@@ -12,6 +12,7 @@ var DropzoneUploadFile = function () {
             autoProcessQueue: false,
             parallelUploads: 100,
             timeout: 300000,
+            acceptedFiles: ".tar, .tgz, .tar.gz, .zip",
             url: 'upload_inside_fdfs',
             init: function () {
                 myDropzone = this;
@@ -23,45 +24,46 @@ var DropzoneUploadFile = function () {
                 done();
             },
             success: function (file, done) {
-                console.log('transfer from inside to outside');
+                console.log('bundle config file has been upload to fdfs');
 
-                let apply_reason = $('#apply_reason').val();
-                let apply_type = $('#apply_type').val();
-                let share_to = $('#m_select2_3').val();
-
+                let instance_id  = $('#apps_select_in_modal option:checked').val();
+                let deploy_reason = $('#apply_reason').val();
+                let app_id = $("#apps_select_in_modal option:checked").val();
+                let uncompress_to = $("#uncompress_to").val();
 
                 let params = {
-                    "apply_reason": apply_reason,
-                    "apply_type": apply_type,
-                    "share_to": share_to,
+                    "instance_id": instance_id,
+                    "deploy_reason": deploy_reason,
+                    "app_id": app_id,
+                    "uncompress_to": uncompress_to,
                 };
 
                 console.log(params);
 
                 $.ajax({
                     type: "POST",
-                    url: "apply_transfer",
+                    url: "submit_bundle_deploy",
                     data: JSON.stringify(params),
                     dataType: 'json',
                     contentType: 'application/json; charset=UTF-8',
                     success: function (result) {
                         if (result.status === 'true') {
                             mApp.unblock('#modal_transfer .modal-content');
-                            $("#modal_transfer").modal('hide');
-                            transfer_table.draw(false);
+                            $("#modal_new_bundle_config").modal('hide');
+                            bundle_config_file_table.draw(false);
                             toastr.info(result.content);
                             //setTimeout("location.reload()", 1000);
                         } else {
 
                             mApp.unblock('#modal_transfer .modal-content');
-                            $('#modal_transfer').modal('hide');
+                            $('#modal_new_bundle_config').modal('hide');
                             toastr.warning(result.content);
                         }
 
                     },
                     error: function (xhr, msg, e) {
                         mApp.unblock('#modal_transfer .modal-content');
-                        $('#modal_transfer').modal('hide');
+                        $('#modal_new_bundle_config').modal('hide');
                         toastr.warning("系统繁忙");
                     }
                 });
@@ -72,9 +74,9 @@ var DropzoneUploadFile = function () {
     return {
         // public functions
         init: function () {
-            transfer_upload_file();
+            upload_bundle_config_file();
         }
     };
 }();
 
-DropzoneUploadFile.init();
+DropzoneUploadBundleConfigFile.init();

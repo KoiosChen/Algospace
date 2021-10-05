@@ -3,8 +3,15 @@ var Select2 = function() {
     //== Private functions
     var demos = function() {
         // basic
-        $('#m_select2_1, #m_select2_1_validate').select2({
-            placeholder: "Select a state"
+        $()
+        $('#namespace_select, #app_groups_select, #apps_select, #configs_select').select2({
+            placeholder: "Please select",
+            width: '100%'
+        });
+
+        $("select[id*='select_in_modal']").select2({
+            placeholder: "Please select",
+            width: '100%'
         });
 
         // nested
@@ -13,8 +20,9 @@ var Select2 = function() {
         });
 
         // multi select
-        $('#m_select2_3, #m_select2_3_validate').select2({
+        $('#m_select2_3, #m_select2_owners').select2({
             placeholder: "可多选",
+            width: '100%'
         });
 
         // basic
@@ -147,36 +155,10 @@ var Select2 = function() {
         });
     }
 
-    var modalDemos = function() {
-        $('#m_select2_modal').on('shown.bs.modal', function () {
-            // basic
-            $('#m_select2_1_modal').select2({
-                placeholder: "Select a state"
-            });
-
-            // nested
-            $('#m_select2_2_modal').select2({
-                placeholder: "Select a state"
-            });
-
-            // multi select
-            $('#m_select2_3_modal').select2({
-                placeholder: "Select a state",
-            });
-
-            // basic
-            $('#m_select2_4_modal').select2({
-                placeholder: "Select a state",
-                allowClear: true
-            }); 
-        });
-    }
-
     //== Public functions
     return {
         init: function() {
             demos();
-            modalDemos();
         }
     };
 }();

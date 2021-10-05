@@ -66,15 +66,15 @@ def ldap_auth(username, password):
                     return attr_dict
                 else:
                     logger.info("username or password error!")
-                    return False
+                    return {}
             except Exception as e:
                 logger.info("username or password error!")
                 logger.info(e)
-                return False
+                return {}
     except KeyError as e:
         logger.info("username or password error!")
         logger.info(e)
-        return False
+        return {}
 
 
 @auth.route('/login', methods=['GET', 'POST'])
@@ -83,12 +83,12 @@ def login():
         fullname = request.form.get('fullname')
         password = request.form.get('password')
         remember_me = request.form.get('remember_me')
-        logger.warning('Somebody is trying to login as {}'.format(fullname))
+        logger.warning(f'Somebody is trying to login as {fullname}')
         user = Users.query.filter_by(username=fullname, status=1).first()
         result = ldap_auth(fullname, password)
         if result:
             session.permanent = True
-            logger.warning('Username is {}'.format(user.username))
+            logger.warning(f'Username is {result["givenName"]}')
             session['LOGINUSER'] = result['sAMAccountName']
             session['LOGINNAME'] = result['givenName']
             session['SELFEMAIL'] = result['mail']
@@ -96,9 +96,8 @@ def login():
             session['SELFID'] = user.id
             login_user(user, remember_me)
             return redirect(request.args.get('next') or url_for('main.index'))
-        logger.warning('This email is not existed')
-        flash('用户名密码错误')
-        return jsonify({'status': 'ok', 'content': 'got files'})
+        logger.warning(f'This {fullname} account is not existed')
+        return jsonify({'status': 'ok', 'content': '用户名密码错误'})
     elif request.method == 'GET':
         return render_template('auth/login.html')
 

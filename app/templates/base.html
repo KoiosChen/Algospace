@@ -269,6 +269,129 @@
                                 </ul>
                             </div>
                         </li>
+                        <li class="m-menu__item  m-menu__item--submenu" aria-haspopup="true"
+                            data-menu-submenu-toggle="hover">
+                            <a href="#" class="m-menu__link m-menu__toggle">
+                                <i class="m-menu__link-icon flaticon-interface-2"></i>
+                                <span class="m-menu__link-text">
+										应用管理
+									</span>
+                                <i class="m-menu__ver-arrow la la-angle-right"></i>
+                            </a>
+                            <div class="m-menu__submenu ">
+                                <span class="m-menu__arrow"></span>
+                                <ul class="m-menu__subnav">
+                                    <li class="m-menu__item  m-menu__item--parent" aria-haspopup="true">
+											<span class="m-menu__link">
+												<span class="m-menu__link-text">
+													应用管理
+												</span>
+											</span>
+                                    </li>
+                                    <li class="m-menu__item " aria-haspopup="true">
+                                        <a href="/namespace_manage"
+                                           class="m-menu__link ">
+                                            <i class="m-menu__link-bullet m-menu__link-bullet--dot">
+                                                <span></span>
+                                            </i>
+                                            <span class="m-menu__link-text">
+													Namespace管理
+												</span>
+                                        </a>
+                                    </li>
+                                    <li class="m-menu__item " aria-haspopup="true">
+                                        <a href="/strategy_manage"
+                                           class="m-menu__link ">
+                                            <i class="m-menu__link-bullet m-menu__link-bullet--dot">
+                                                <span></span>
+                                            </i>
+                                            <span class="m-menu__link-text">
+													策略管理
+												</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="m-menu__item  m-menu__item--submenu" aria-haspopup="true"
+                            data-menu-submenu-toggle="hover">
+                            <a href="#" class="m-menu__link m-menu__toggle">
+                                <i class="m-menu__link-icon fa fa-gears"></i>
+                                <span class="m-menu__link-text">
+										配置管理
+									</span>
+                                <i class="m-menu__ver-arrow la la-angle-right"></i>
+                            </a>
+                            <div class="m-menu__submenu ">
+                                <span class="m-menu__arrow"></span>
+                                <ul class="m-menu__subnav">
+                                    <li class="m-menu__item  m-menu__item--parent" aria-haspopup="true">
+											<span class="m-menu__link">
+												<span class="m-menu__link-text">
+													配置管理
+												</span>
+											</span>
+                                    </li>
+                                    <!--<li class="m-menu__item " aria-haspopup="true">
+                                        <a href="/manage_template"
+                                           class="m-menu__link ">
+                                            <i class="m-menu__link-bullet m-menu__link-bullet--dot">
+                                                <span></span>
+                                            </i>
+                                            <span class="m-menu__link-text">
+													配置模板管理
+												</span>
+                                        </a>
+                                    </li>
+                                    <li class="m-menu__item " aria-haspopup="true">
+                                        <a href="/manage_config_files"
+                                           class="m-menu__link ">
+                                            <i class="m-menu__link-bullet m-menu__link-bullet--dot">
+                                                <span></span>
+                                            </i>
+                                            <span class="m-menu__link-text">
+													配置文件管理
+												</span>
+                                        </a>
+                                        {% if current_user.is_operator() %}
+                                        <li class="m-menu__item " aria-haspopup="true">
+                                            <a href="/issue"
+                                               class="m-menu__link ">
+                                                <i class="m-menu__link-bullet m-menu__link-bullet--dot">
+                                                    <span></span>
+                                                </i>
+                                                <span class="m-menu__link-text">
+													审核发布
+                                            </span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                    </li>-->
+                                    <li class="m-menu__item " aria-haspopup="true">
+                                        <a href="/strategy_bundle_deploy"
+                                           class="m-menu__link ">
+                                            <i class="m-menu__link-bullet m-menu__link-bullet--dot">
+                                                <span></span>
+                                            </i>
+                                            <span class="m-menu__link-text">
+													配置文件批量发布
+												</span>
+                                        </a>
+                                    </li>
+                                    <li class="m-menu__item " aria-haspopup="true">
+                                        <a href="/strategy_bundle_deploy_issue"
+                                           class="m-menu__link ">
+                                            <i class="m-menu__link-bullet m-menu__link-bullet--dot">
+                                                <span></span>
+                                            </i>
+                                            <span class="m-menu__link-text">
+													批量发布审核
+												</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
                     </ul>
                 </div>
                 <!-- END: Aside Menu -->

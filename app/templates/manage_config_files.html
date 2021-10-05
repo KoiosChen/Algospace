@@ -1,0 +1,316 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+
+
+{% block subheader %}
+    <div class="m-subheader ">
+        <div class="d-flex align-items-center">
+            <div class="mr-auto">
+                <h3 class="m-subheader__title m-subheader__title--separator">
+                    配置管理
+                </h3>
+                <ul class="m-subheader__breadcrumbs m-nav m-nav--inline">
+                    <li class="m-nav__item m-nav__item--home">
+                        <a href="#" class="m-nav__link m-nav__link--icon">
+                            <i class="m-nav__link-icon la la-home"></i>
+                        </a>
+                    </li>
+                    <li class="m-nav__separator">
+                        -
+                    </li>
+                    <li class="m-nav__item">
+                        <a href="" class="m-nav__link">
+											<span class="m-nav__link-text">
+												配置文件管理
+											</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block pagecontent %}
+    <div class="m-portlet m-portlet--success m-portlet--head-solid-bg">
+        <div class="m-portlet__head">
+            <div class="m-portlet__head-caption">
+                <div class="m-portlet__head-title">
+                    <h3 class="m-portlet__head-text">
+                        配置文件管理
+                    </h3>
+                </div>
+            </div>
+            <div class="m-portlet__head-tools">
+                <ul class="m-portlet__nav">
+                    <li class="m-portlet__nav-item">
+                        <a id="mail_from_excel" class="m-portlet__nav-link m-portlet__nav-link--icon">
+                            <i class="fa fa-envelope-o"></i>
+                        </a>
+                    </li>
+
+                    <!--<li class="m-portlet__nav-item">
+                        <a id="newOne" class="m-portlet__nav-link m-portlet__nav-link--icon">
+                            <i class="fa fa-envelope-o"></i>
+                        </a>
+                    </li>-->
+                </ul>
+            </div>
+        </div>
+
+        <div class="m-portlet__body">
+            <div class="form-group m-form__group row">
+                <label class="col-lg-1 col-form-label">
+                    namespace：
+                </label>
+                <div class="col-lg-2">
+                    <select class="form-control m-select2" id="namespace_select" name="param">
+                        <option value="0">请选择</option>
+                        {% for op in namespaces %}
+                            <option value={{ op[1] }}>{{ op[0] }}</option>
+                        {% endfor %}
+                    </select>
+                    <span></span>
+                </div>
+
+                <label class="col-lg-1 col-form-label">
+                    APP Groups：
+                </label>
+                <div class="col-lg-2">
+                    <select class="form-control m-select2" id="app_groups_select" name="param">
+                        <option value="0">请选择</option>
+                    </select>
+                    <span></span>
+                </div>
+
+                <label class="col-lg-1 col-form-label">
+                    APPs：
+                </label>
+                <div class="col-lg-2">
+                    <select class="form-control m-select2" id="apps_select" name="param">
+                        <option value="0">请选择</option>
+                    </select>
+                    <span></span>
+                </div>
+
+                <label class="col-lg-1 col-form-label">
+                    Configs：
+                </label>
+                <div class="col-lg-2">
+                    <select class="form-control m-select2" id="configs_select" name="param">
+                    </select>
+                    <span></span>
+                </div>
+
+                <div class="col-lg-2">
+                    <button type="button" class="btn btn-danger" id="clear_all_data">
+                        清空
+                    </button>
+                    <button type="submit" class="btn btn-brand" id="search_submit">
+                        搜索
+                    </button>
+                    <span></span>
+                </div>
+            </div>
+            <table id="config_file_table_id" class="display nowrap" style="width:100%">
+                <thead>
+                <tr>
+                    <th>KEY</th>
+                    <th>VALUE</th>
+                    <th>STATUS</th>
+                    <th>VERSION</th>
+                    <th>ACTION</th>
+                </tr>
+                </thead>
+                <tfoot>
+                <tr>
+                    <th>KEY</th>
+                    <th>VALUE</th>
+                    <th>STATUS</th>
+                    <th>VERSION</th>
+                    <th>ACTION</th>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <!-- 模态框（Modal）begin -->
+    <div class="modal fade" id="sendmail2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">
+                        编辑配置文件
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">
+                            &times;
+                        </span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="modal_config_id"></p>
+                    <p id="modal_key_id"></p>
+                    <form class="m-form m-form--fit m-form--label-align-right" id="m_form_config">
+                        <div class="m-form__content">
+                            <div class="m-alert m-alert--icon alert alert-danger m--hide" role="alert"
+                                 id="m_form_excel_msg">
+                                <div class="m-alert__icon">
+                                    <i class="la la-warning"></i>
+                                </div>
+                                <div class="m-alert__text">
+                                    填写信息有误，请检查重填后再次提交！
+                                </div>
+                                <div class="m-alert__close">
+                                    <button type="button" class="close" data-close="alert" aria-label="Close"></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group m-form__group row m--margin-top-20">
+                            <div class="ibox-content col-lg-12 col-md-9 col-sm-12">
+
+                                <div id="editor"></div>
+                            </div>
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" id="clear_all_modal_data">
+                                清空
+                            </button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                关闭
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="submit_config_file">
+                                提交
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block scripts %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="../static/mycss/datatable/jquery.dataTables.min.css">
+
+    <script type="text/javascript" charset="utf8" src="../static/datatable/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="../static/datatable/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="../static/datatable/dataTables.select.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="../static/datatable/showdown.min.js"></script>
+    <script src="../static/js/moment.min.js"></script>
+    <script src="../static/js/daterangepicker.js"></script>
+    <script src="../static/metronic/bootstrap-daterangepicker.js" type="text/javascript"></script>
+    <script src="../static/metronic-default/assets/demo/default/custom/components/forms/widgets/select2.js"
+            type="text/javascript"></script>
+
+    <script src="../static/metronic-default/assets/demo/default/custom/components/portlets/tools.js"
+            type="text/javascript"></script>
+    <script src="../static/datatable/mylang.js" type="text/javascript"></script>
+    <script type="text/javascript" src="../static/socket.io.js"></script>
+
+
+    <script src="../static/metronic/ace-builds-master/src/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../static/metronic/ace-builds-master/src/mode-yaml.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../static/metronic/manage_config_files/form-controls-config-files.js" type="text/javascript"></script>
+    <script src="../static/metronic/manage_config_files/config_file_form.js" type="text/javascript"></script>
+    <script src="../static/metronic/manage_config_files/config_select2.js.js" type="text/javascript"></script>
+    <script>
+        var editor = ace.edit("editor");
+        editor.setTheme("ace/theme/solarized_light");
+        var YAMLMode = ace.require("ace/mode/yaml").Mode;
+        editor.session.setMode(new YAMLMode());
+        editor.setFontSize("15px");
+        editor.setPrintMarginColumn(false);
+        editor.setOptions({
+            maxLines: 1000,
+            autoScrollEditorIntoView: true
+        });
+    </script>
+    <script>
+        $("#mail_from_excel").click(function () {
+            $("#sendmail2").removeData("bs.modal").modal('show');
+            editor.getSession().setValue("")
+            $("#modal_config_id").text("当前Config File ID: " + $("#configs_select").val())
+            $("#modal_key_id").text("")
+            $.ajax({
+                type: "GET",          //提交方式          
+                url: "get_config_file",  //提交的页面/方法名          
+                data: {},          //参数（如果没有参数：null）          
+                contentType: "application/json; charset=utf-8",
+                success: function (msg) {
+                    if (msg.status === 'OK') {
+                        editor.setValue(msg.content)
+                    } else {
+                        toastr.warning(msg.content);
+                    }
+                },
+                error: function (xhr, msg, e) {
+                    toastr.warning("删除");
+                }
+            });
+        });
+
+        function ConfigFile(sc_id, action) {
+            $("#sendmail2").removeData("bs.modal").modal('show');
+            editor.getSession().setValue("")
+            let params = {"sc_id": sc_id, "action": action};
+            console.log(params)
+            $("#modal_config_id").text("当前Config File ID: " + $("#configs_select").val())
+            $("#modal_key_id").text("当前KEY ID: " + sc_id)
+            $.ajax({
+                type: "GET",          //提交方式          
+                url: "get_config_file",  //提交的页面/方法名          
+                data: params,          //参数（如果没有参数：null）          
+                contentType: "application/json; charset=utf-8",
+                success: function (msg) {
+                    if (msg.status === 'OK') {
+                        editor.setValue(msg.content)
+                    } else {
+                        toastr.warning(msg.content);
+                    }
+                },
+                error: function (xhr, msg, e) {
+                    toastr.warning("删除");
+                }
+            });
+        }
+
+        function HTMerConfirm(sc_id, action) {
+            if (confirm("确定操作吗")) {
+                let params = {"sc_id": sc_id, "action": action};
+                console.log(params)
+                $.ajax({
+                    type: "POST",          //提交方式          
+                    url: "transfer_confirm_action",  //提交的页面/方法名          
+                    data: JSON.stringify(params, null, '\t'),          //参数（如果没有参数：null）          
+                    contentType: "application/json; charset=utf-8",
+                    success: function (msg) {
+                        if (msg.status === 'OK') {
+                            toastr.info(msg.content);
+                            transfer_confirm_table.draw(false);
+                        } else {
+                            toastr.warning(msg.content);
+                        }
+                    },
+                    error: function (xhr, msg, e) {
+                        toastr.warning("删除");
+                    }
+                });
+            } else {
+                toastr.warning('取消删除')
+            }
+        }
+
+
+    </script>
+{% endblock %}

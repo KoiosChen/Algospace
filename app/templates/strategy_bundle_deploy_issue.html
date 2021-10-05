@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+
+
+{% block subheader %}
+    <div class="m-subheader ">
+        <div class="d-flex align-items-center">
+            <div class="mr-auto">
+                <h3 class="m-subheader__title m-subheader__title--separator">
+                    配置管理
+                </h3>
+                <ul class="m-subheader__breadcrumbs m-nav m-nav--inline">
+                    <li class="m-nav__item m-nav__item--home">
+                        <a href="#" class="m-nav__link m-nav__link--icon">
+                            <i class="m-nav__link-icon la la-home"></i>
+                        </a>
+                    </li>
+                    <li class="m-nav__separator">
+                        -
+                    </li>
+                    <li class="m-nav__item">
+                        <a href="" class="m-nav__link">
+											<span class="m-nav__link-text">
+												待发布策略管理
+											</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block pagecontent %}
+    <div class="m-portlet m-portlet--success m-portlet--head-solid-bg">
+        <div class="m-portlet__head">
+            <div class="m-portlet__head-caption">
+                <div class="m-portlet__head-title">
+                    <h3 class="m-portlet__head-text">
+                        待发布订单
+                        <small>
+                            审核测试发布请求
+                        </small>
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div class="m-portlet__body">
+            <table id="table_ready_issue" class="display nowrap" style="width:100%">
+                <thead>
+                <tr>
+                    <th>订单号</th>
+                    <th>文件名</th>
+                    <th>解压路径</th>
+                    <th>待发布版本号</th>
+                    <th>已发布版本好</th>
+                    <th>发布说明</th>
+                    <th>提交人</th>
+                    <th>提交时间</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tfoot>
+                <tr>
+                    <th>订单号</th>
+                    <th>文件名</th>
+                    <th>解压路径</th>
+                    <th>待发布版本号</th>
+                    <th>已发布版本好</th>
+                    <th>发布说明</th>
+                    <th>提交人</th>
+                    <th>提交时间</th>
+                    <th>操作</th>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <!-- 模态框（Modal）end -->
+{% endblock %}
+
+
+{% block scripts %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="../static/mycss/datatable/jquery.dataTables.min.css">
+
+    <script type="text/javascript" charset="utf8" src="../static/datatable/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="../static/datatable/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="../static/datatable/dataTables.select.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="../static/datatable/showdown.min.js"></script>
+    <script src="../static/js/moment.min.js"></script>
+    <script src="../static/js/daterangepicker.js"></script>
+    <script src="../static/metronic/bootstrap-daterangepicker.js" type="text/javascript"></script>
+
+    <script src="../static/metronic-default/assets/demo/default/custom/components/portlets/tools.js"
+            type="text/javascript"></script>
+    <script src="../static/datatable/mylang.js" type="text/javascript"></script>
+    <script src="../static/metronic-default/assets/demo/default/custom/components/forms/widgets/select2.js"
+            type="text/javascript"></script>
+    <script type="text/javascript" src="../static/socket.io.js"></script>
+    <script src="../static/metronic/manage_config_files/bundle_config_file_form_issue.js"
+            type="text/javascript"></script>
+    <script src="../static/metronic/manage_config_files/bundle_config_swal.js" type="text/javascript"></script>
+
+    <script>
+
+
+        toastr.options = {
+            "closeButton": true, //是否显示关闭按钮
+            "debug": false, //是否使用debug模式
+            "progressBar": false,
+            "positionClass": "toast-top-center",//弹出窗的位置
+            "showDuration": "2000",//显示的动画时间
+            "hideDuration": "1000",//消失的动画时间
+            "timeOut": "2000", //展现时间
+            "extendedTimeOut": "1000",//加长展示时间
+            "showEasing": "swing",//显示时的动画缓冲方式
+            "hideEasing": "linear",//消失时的动画缓冲方式
+            "showMethod": "fadeIn",//显示时的动画方式
+            "hideMethod": "fadeOut" //消失时的动画方式
+        };
+    </script>
+{% endblock %}

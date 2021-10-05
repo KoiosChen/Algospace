@@ -1,0 +1,378 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+
+
+{% block subheader %}
+    <div class="m-subheader ">
+        <div class="d-flex align-items-center">
+            <div class="mr-auto">
+                <h3 class="m-subheader__title m-subheader__title--separator">
+                    配置管理
+                </h3>
+                <ul class="m-subheader__breadcrumbs m-nav m-nav--inline">
+                    <li class="m-nav__item m-nav__item--home">
+                        <a href="#" class="m-nav__link m-nav__link--icon">
+                            <i class="m-nav__link-icon la la-home"></i>
+                        </a>
+                    </li>
+                    <li class="m-nav__separator">
+                        -
+                    </li>
+                    <li class="m-nav__item">
+                        <a href="" class="m-nav__link">
+											<span class="m-nav__link-text">
+												策略配置管理
+											</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block pagecontent %}
+    <div class="m-portlet m-portlet--success m-portlet--head-solid-bg">
+        <div class="m-portlet__head">
+            <div class="m-portlet__head-caption">
+                <div class="m-portlet__head-title">
+                    <h3 class="m-portlet__head-text">
+                        批量配置发布订单
+                        <small>
+                            新增、查询订单
+                        </small>
+                    </h3>
+                </div>
+            </div>
+            <div class="m-portlet__head-tools">
+                <ul class="m-portlet__nav">
+                    <li class="m-portlet__nav-item">
+                        <div class="btn btn-toolbar m-btn m-btn--icon" id="deploy_new_bundle_config">
+																<span>
+																	<i class="la la-plus"></i>
+																	<span>
+																		Config
+																	</span>
+																</span>
+                        </div>
+                    </li>
+
+                    <!--<li class="m-portlet__nav-item">
+                        <a id="newOne" class="m-portlet__nav-link m-portlet__nav-link--icon">
+                            <i class="fa fa-envelope-o"></i>
+                        </a>
+                    </li>-->
+                </ul>
+            </div>
+        </div>
+        <div class="m-portlet__body">
+            <table id="table_bundle_deploy" class="display nowrap" style="width:100%">
+                <thead>
+                <tr>
+                    <th>订单号</th>
+                    <th>文件名</th>
+                    <th>版本号</th>
+                    <th>解压路径</th>
+                    <th>提交时间</th>
+                    <th>审核人</th>
+                    <th>审核结果</th>
+                    <th>审核时间</th>
+                </tr>
+                </thead>
+                <tfoot>
+                <tr>
+                    <th>订单号</th>
+                    <th>文件名</th>
+                    <th>版本号</th>
+                    <th>解压路径</th>
+                    <th>提交时间</th>
+                    <th>审核人</th>
+                    <th>审核结果</th>
+                    <th>审核时间</th>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal_new_bundle_config" tabindex="-1" role="dialog" aria-labelledby=""
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="">
+                        Bundle Deploy
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="la la-remove"></span>
+                    </button>
+                </div>
+                <form class="m-form m-form--fit m-form--label-align-right" id="m_form_bundle_config"
+                      data-select2-id="82">
+                    <div class="modal-body">
+                        <div class="m-form__content">
+                            <div class="m-alert m-alert--icon alert alert-danger m--hide" role="alert"
+                                 id="m_form_bundle_config_msg">
+                                <div class="m-alert__icon">
+                                    <i class="la la-warning"></i>
+                                </div>
+                                <div class="m-alert__text">
+                                    填写信息有误，请检查重填后再次提交！
+                                </div>
+                                <div class="m-alert__close">
+                                    <button type="button" class="close" data-close="alert" aria-label="Close"></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group m-form__group row m--margin-top-10">
+                            <label class="col-form-label col-lg-3 col-sm-12">
+                                namespace
+                            </label>
+                            <div class="col-lg-6 col-md-9 col-sm-12">
+                                <select class="form-control m-select2" id="namespace_select_in_modal"
+                                        name="namespace_select_in_modal">
+                                    <option value="0">select a namespace</option>
+                                    {% for op in namespaces %}
+                                        <option value={{ op[1] }}>{{ op[0] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group m-form__group row m--margin-top-10">
+                            <label class="col-form-label col-lg-3 col-sm-12">
+                                strategy
+                            </label>
+                            <div class="col-lg-6 col-md-9 col-sm-12">
+                                <select class="form-control m-select2" id="app_groups_select_in_modal"
+                                        name="app_groups_select_in_modal">
+                                    <option value="0">select a strategy</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group m-form__group row m--margin-top-10">
+                            <label class="col-form-label col-lg-3 col-sm-12">
+                                instance
+                            </label>
+                            <div class="col-lg-6 col-md-9 col-sm-12">
+                                <select class="form-control m-select2" id="apps_select_in_modal"
+                                        name="apps_select_in_modal">
+                                    <option value="0">select a instance</option>
+                                </select>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-3"></div>
+                                <div class="col">
+                                    <div class="btn btn btn-primary m-btn m-btn--icon" id="plus_new_instance">
+																<span>
+																	<i class="la la-plus"></i>
+																	<span>
+																		Instance
+																	</span>
+																</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="form-group m-form__group row m--margin-top-5">
+                            <label class="col-form-label col-lg-3 col-sm-12">
+                                uncompress to
+                            </label>
+                            <div class="col-lg-6 col-md-9 col-sm-12">
+                                <input type="text" class="form-control"
+                                       style="border: 0px;outline:none;cursor: pointer;" readonly="readonly"
+                                       id="uncompress_to">
+                            </div>
+                        </div>
+
+                        <div class="form-group m-form__group row m--margin-top-5">
+                            <label class="col-form-label col-lg-3 col-sm-12">
+                                deployed version
+                            </label>
+                            <div class="col-lg-6 col-md-9 col-sm-12">
+                                <input type="text" class="form-control"
+                                       style="border: 0px;outline:none;cursor: pointer;" readonly="readonly"
+                                       id="deployed_version">
+                            </div>
+                        </div>
+
+                        <div class="form-group m-form__group row m--margin-top-10">
+                            <label class="col-form-label col-lg-3 col-sm-12">
+                                upload *
+                            </label>
+                            <div class="col-lg-6 col-md-9 col-sm-12">
+                                <div class="m-dropzone dropzone m-dropzone--success dz-clickable"
+                                     id="m-dropzone">
+                                    <div class="m-dropzone__msg dz-message needsclick">
+                                        <h3 class="m-dropzone__msg-title">
+                                            拖动文件至此或点击上传
+                                        </h3>
+                                        <span class="m-dropzone__msg-desc">
+                                            仅允许.tar, .tgz, .tar.gz, .zip格式压缩文件
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group m-form__group row m--margin-top-20">
+                            <label class="col-form-label col-lg-3 col-sm-12">
+                                memo
+                            </label>
+                            <div class="col-lg-9 col-md-9 col-sm-12">
+                                <textarea class="form-control m-input m-input--air" id="apply_reason"
+                                          name="deploy_reason"
+                                          rows="1" style="width: 75%"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                关闭
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="sendmail_fromexcel">
+                                提交
+                            </button>
+                        </div>
+
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal_new_instance" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="">
+                        New Instance
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="la la-remove"></span>
+                    </button>
+                </div>
+                <form class="m-form m-form--fit m-form--label-align-right" id="m_form_new_instance"
+                      data-select2-id="82">
+                    <div class="modal-body">
+                        <div class="m-form__content">
+                            <div class="m-alert m-alert--icon alert alert-danger m--hide" role="alert"
+                                 id="m_form_new_instance_msg">
+                                <div class="m-alert__icon">
+                                    <i class="la la-warning"></i>
+                                </div>
+                                <div class="m-alert__text">
+                                    填写信息有误，请检查重填后再次提交！
+                                </div>
+                                <div class="m-alert__close">
+                                    <button type="button" class="close" data-close="alert" aria-label="Close"></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group m-form__group row m--margin-top-20">
+                            <label class="col-form-label col-lg-3 col-sm-9">
+                                Prefix
+                            </label>
+                            <div class="col-lg-6 col-md-9 col-sm-12">
+                                <input type="text" class="form-control"
+                                       style="border: 0px;outline:none;cursor: pointer;" readonly="readonly"
+                                       id="namespace_strategy">
+                            </div>
+                        </div>
+
+                        <div class="form-group m-form__group row m--margin-top-20">
+                            <label class="col-form-label col-lg-3 col-sm-9">
+                                Instance *
+                            </label>
+                            <div class="col-lg-6 col-md-9 col-sm-12">
+                                <input type="text" class="form-control" placeholder="请输入策略实例名称"
+                                       id="new_instance_name" name="new_instance_name">
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                关闭
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="submit_new_instance">
+                                提交
+                            </button>
+                        </div>
+
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框（Modal）end -->
+{% endblock %}
+
+
+{% block scripts %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="../static/mycss/datatable/jquery.dataTables.min.css">
+
+    <script type="text/javascript" charset="utf8" src="../static/datatable/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="../static/datatable/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="../static/datatable/dataTables.select.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="../static/datatable/showdown.min.js"></script>
+    <script src="../static/js/moment.min.js"></script>
+    <script src="../static/js/daterangepicker.js"></script>
+    <script src="../static/metronic/bootstrap-daterangepicker.js" type="text/javascript"></script>
+
+    <script src="../static/metronic-default/assets/demo/default/custom/components/portlets/tools.js"
+            type="text/javascript"></script>
+    <script src="../static/datatable/mylang.js" type="text/javascript"></script>
+    <script src="../static/metronic-default/assets/demo/default/custom/components/forms/widgets/select2.js"
+            type="text/javascript"></script>
+
+    <script src="../static/metronic/manage_config_files/config_select2.js" type="text/javascript"></script>
+    <script src="../static/metronic/manage_config_files/dropzone_upload_budle_config_file.js"
+            type="text/javascript"></script>
+    <script src="../static/metronic/manage_config_files/form-controls-bundle-config-files.js"
+            type="text/javascript"></script>
+    <script src="../static/metronic/manage_config_files/bundle_config_file_form.js" type="text/javascript"></script>
+
+    <script>
+        $("#deploy_new_bundle_config").click(function () {
+            $("#apply_reason").val("");
+            //$("div.form-control-feedback").remove();
+            $("#modal_new_bundle_config").removeData("bs.modal").modal("show");
+        });
+
+        $("#plus_new_instance").click(function () {
+            if ($("#namespace_select_in_modal").val() !== "0" && $("#app_groups_select_in_modal").val() !== "0") {
+                $("#namespace_strategy").val($("#namespace_select_in_modal option:checked").text() + "/" + $("#app_groups_select_in_modal option:checked").text())
+                $("#modal_new_instance").removeData("bs.modal").modal("show");
+            } else {
+                toastr.warning("namespace and strategy must be selected")
+            }
+        });
+
+        // toastr options
+        toastr.options = {
+            "closeButton": true, //是否显示关闭按钮
+            "debug": false, //是否使用debug模式
+            "progressBar": false,
+            "positionClass": "toast-top-center",//弹出窗的位置
+            "showDuration": "2000",//显示的动画时间
+            "hideDuration": "1000",//消失的动画时间
+            "timeOut": "2000", //展现时间
+            "extendedTimeOut": "1000",//加长展示时间
+            "showEasing": "swing",//显示时的动画缓冲方式
+            "hideEasing": "linear",//消失时的动画缓冲方式
+            "showMethod": "fadeIn",//显示时的动画方式
+            "hideMethod": "fadeOut" //消失时的动画方式
+        };
+    </script>
+{% endblock %}

@@ -8,7 +8,7 @@
         <div class="d-flex align-items-center">
             <div class="mr-auto">
                 <h3 class="m-subheader__title m-subheader__title--separator">
-                    内外网管理
+                    应用管理
                 </h3>
                 <ul class="m-subheader__breadcrumbs m-nav m-nav--inline">
                     <li class="m-nav__item m-nav__item--home">
@@ -22,17 +22,7 @@
                     <li class="m-nav__item">
                         <a href="" class="m-nav__link">
 											<span class="m-nav__link-text">
-												文件传输管理
-											</span>
-                        </a>
-                    </li>
-                    <li class="m-nav__separator">
-                        -
-                    </li>
-                    <li class="m-nav__item">
-                        <a href="" class="m-nav__link">
-											<span class="m-nav__link-text">
-												内网发文件到外网
+												应用管理
 											</span>
                         </a>
                     </li>
@@ -49,19 +39,21 @@
             <div class="m-portlet__head-caption">
                 <div class="m-portlet__head-title">
                     <h3 class="m-portlet__head-text">
-                        传输订单
-                        <small>
-                            新增、查询订单
-                        </small>
+                        Namespace配置
                     </h3>
                 </div>
             </div>
             <div class="m-portlet__head-tools">
                 <ul class="m-portlet__nav">
                     <li class="m-portlet__nav-item">
-                        <a id="mail_from_excel" class="m-portlet__nav-link m-portlet__nav-link--icon">
-                            <i class="fa fa-envelope-o"></i>
-                        </a>
+                        <div class="btn btn-toolbar m-btn m-btn--icon" id="new_namespace">
+																<span>
+																	<i class="la la-plus"></i>
+																	<span>
+																		Namespace
+																	</span>
+																</span>
+                        </div>
                     </li>
 
                     <!--<li class="m-portlet__nav-item">
@@ -73,56 +65,45 @@
             </div>
         </div>
         <div class="m-portlet__body">
-            <table id="transfer_orders_id" class="display nowrap" style="width:100%">
+            <table id="table_namespaces" class="display nowrap" style="width:100%">
                 <thead>
                 <tr>
-                    <th>订单号</th>
-                    <th>文件名称</th>
-                    <th>申请理由</th>
-                    <th>申请类型</th>
-                    <th>申请时间</th>
-                    <th>共享</th>
-                    <th>审核人</th>
-                    <th>审核结果</th>
-                    <th>审核时间</th>
+                    <th>Namespace</th>
+                    <th>Owner</th>
+                    <th>Related strategies</th>
+                    <th>action</th>
                 </tr>
                 </thead>
                 <tfoot>
                 <tr>
-                    <th>订单号</th>
-                    <th>文件名称</th>
-                    <th>申请理由</th>
-                    <th>申请类型</th>
-                    <th>申请时间</th>
-                    <th>共享</th>
-                    <th>审核人</th>
-                    <th>审核结果</th>
-                    <th>审核时间</th>
+                    <th>Namespace</th>
+                    <th>Owner</th>
+                    <th>Related strategies</th>
+                    <th>action</th>
                 </tr>
                 </tfoot>
             </table>
         </div>
     </div>
 
-    <div class="modal fade" id="modal_transfer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    <div class="modal fade" id="modal_new_namespace" tabindex="-1" role="dialog" aria-labelledby=""
          aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">
-                        文件传输
+                    <h5 class="modal-title" id="">
+                        New Namespace
                     </h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">
-                            &times;
-                        </span>
+                        <span aria-hidden="true" class="la la-remove"></span>
                     </button>
                 </div>
-                <div class="modal-body">
-                    <form class="m-form m-form--fit m-form--label-align-right" id="m_form_excel" data-select2-id="82">
+                <form class="m-form m-form--fit m-form--label-align-right" id="m_form_namespace"
+                      data-select2-id="82">
+                    <div class="modal-body">
                         <div class="m-form__content">
                             <div class="m-alert m-alert--icon alert alert-danger m--hide" role="alert"
-                                 id="m_form_excel_msg">
+                                 id="modal_new_namespace_msg">
                                 <div class="m-alert__icon">
                                     <i class="la la-warning"></i>
                                 </div>
@@ -135,71 +116,40 @@
                             </div>
                         </div>
 
-                        <div class="form-group m-form__group row m--margin-top-20">
+                        <div class="form-group m-form__group row m--margin-top-5">
                             <label class="col-form-label col-lg-3 col-sm-12">
-                                上传文件 *
+                                Namespace *
                             </label>
                             <div class="col-lg-6 col-md-9 col-sm-12">
-                                <div class="m-dropzone dropzone m-dropzone--success dz-clickable"
-                                     id="m-dropzone">
-                                    <div class="m-dropzone__msg dz-message needsclick">
-                                        <h3 class="m-dropzone__msg-title">
-                                            拖动文件至此或点击上传.
-                                        </h3>
-                                        <!--<span class="m-dropzone__msg-desc">
-                                            仅允许EXCEL文件(.xlsx)
-                                        </span>-->
-                                    </div>
-                                </div>
+                                <input type="hidden" id="tmp_namespace_id">
+                                <input type="text" class="form-control" id="new_namespace_name"
+                                       name="new_namespace_name"
+                                       placeholder="namespace's name">
                             </div>
                         </div>
                         <div class="form-group m-form__group row">
                             <label class="col-form-label col-lg-3 col-sm-12">
-                                申请类型 *
+                                Owners
                             </label>
-                            <div class="col-lg-4 col-md-9 col-sm-12">
-                                <select class="form-control m-bootstrap-select m_selectpicker"
-                                        title="申请类型" style="width: 75%" id="apply_type" name="apply_type">
-                                    {% for op in apply_type %}
-                                        <option value={{ op[1] }}>{{ op[0] }}</option>
-                                    {% endfor %}
+                            <div class="col-lg-6 col-md-9 col-sm-12">
+                                <select class="form-control m-select2" id="m_select2_owners" name="param"
+                                        multiple="multiple" style="width: 100%">
+                                    <option value="0">multi select</option>
                                 </select>
                             </div>
                         </div>
 
-                        <div class="form-group m-form__group row m--margin-top-20">
-                            <label class="col-form-label col-lg-3 col-sm-12">
-                                申请理由:
-                            </label>
-                            <div class="col-lg-9 col-md-9 col-sm-12">
-                                <textarea class="form-control m-input m-input--air" id="apply_reason"
-                                          name="apply_reason"
-                                          rows="1" style="width: 75%"></textarea>
-                            </div>
-                        </div>
-                        <div class="form-group m-form__group row m--margin-top-20">
-                            <label class="col-form-label col-lg-3 col-sm-12">
-                                共享给同事:
-                            </label>
-                            <div class="col-lg-8 col-md-9 col-sm-12">
-                                <select class="form-control m-select2" id="m_select2_3" name="share_to"
-                                        multiple="multiple" style="width: 75%">
-                                    {% for op in sendto_users %}
-                                        <option value={{ op[1] }}>{{ op[0] }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">
                                 关闭
                             </button>
-                            <button type="submit" class="btn btn-primary" id="sendmail_fromexcel">
+                            <button type="submit" class="btn btn-primary" id="submit_modal_1">
                                 提交
                             </button>
                         </div>
-                    </form>
-                </div>
+
+                    </div>
+                </form>
 
             </div>
         </div>
@@ -226,23 +176,48 @@
     <script src="../static/datatable/mylang.js" type="text/javascript"></script>
     <script src="../static/metronic-default/assets/demo/default/custom/components/forms/widgets/select2.js"
             type="text/javascript"></script>
-    <script src="../static/metronic-default/assets/demo/default/custom/components/forms/widgets/bootstrap-select.js"
+    <script src="../static/metronic/public_js/get_user_list.js" type="text/javascript"></script>
+    <script src="../static/metronic/namespace/form-controls-namespace.js"
             type="text/javascript"></script>
-
-
-    <script src="../static/metronic/transfer_files/transfer_orders.js" type="text/javascript"></script>
-    <script src="../static/metronic/transfer_files/dropzone_upload_file.js" type="text/javascript"></script>
-    <script src="../static/metronic/transfer_files/form_controls_transfer.js" type="text/javascript"></script>
+    <script src="../static/metronic/namespace/namespace_form.js" type="text/javascript"></script>
 
     <script>
-        $("#mail_from_excel").click(function () {
-            $("#apply_reason").val("");
-            $('#apply_type').selectpicker('val',['noneSelectedText'])
-            $("#apply_type").selectpicker("refresh");
-            $('#m_select2_3').select2('val',['noneSelectedText'])
+        $("#new_namespace").click(function () {
             //$("div.form-control-feedback").remove();
-            $("#modal_transfer").removeData("bs.modal").modal("show");
+            $("#new_namespace_name").val("")
+            $("#modal_new_namespace_msg").removeClass('m--hide').hide();
+            $("#modal_new_namespace").removeData("bs.modal").modal("show");
+            let select_id = "#m_select2_owners"
+            get_user_list(select_id)
         });
+
+        function EditNamespace(sc_id, action) {
+            let params = {"namespace_id": sc_id, "action": action};
+            var owern_id;
+            console.log(params)
+            $.ajax({
+                type: "POST",          //提交方式          
+                url: "load_namespace",  //提交的页面/方法名          
+                data: JSON.stringify(params, null, '\t'),          //参数（如果没有参数：null）          
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                success: function (msg) {
+                    console.log(msg)
+                    mApp.unblock('#modal_new_namespace .modal-content');
+                    owern_id = msg.content.records[0].owner_id
+                    $("#tmp_namespace_id").val(sc_id)
+                    $("#new_namespace_name").val(msg.content.records[0].name)
+                    $("#modal_new_namespace_msg").removeClass('m--hide').hide();
+                    $("#modal_new_namespace").removeData("bs.modal").modal("show");
+                },
+                error: function (xhr, msg, e) {
+                    toastr.warning("删除");
+                }
+            });
+            let select_id = "#m_select2_owners"
+            get_user_list(select_id,owern_id)
+        }
+
 
         // toastr options
         toastr.options = {
