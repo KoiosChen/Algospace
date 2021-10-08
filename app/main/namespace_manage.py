@@ -95,7 +95,7 @@ def update_namespace():
                      **{"user_id": user_id,
                         "namespace_id": namespace_id,
                         "permission": "0x02"})
-
+    db.session.commit()
     result = "更新成功"
 
     return jsonify({"status": "OK", "content": result})

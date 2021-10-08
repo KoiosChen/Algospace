@@ -1,6 +1,7 @@
 from flask import session, render_template, request, jsonify
 from flask_login import login_required
-from ..models import Permission, PermitNamespace, PermitApp, NameSpaces, Apps, BundleConfigs, result_dict
+from ..models import Permission, PermitNamespace, PermitApp, NameSpaces, Apps, BundleConfigs, result_dict, \
+    PermitAppGroup, Users
 from ..decorators import permission_required
 from .. import logger, db, mailbox, socketio
 from . import main
@@ -121,7 +122,13 @@ def load_bundle_config_table():
 
     """
     args = dict()
-    lines = get_table_data(BundleConfigs, args, appends=['issue_user'])
+    lines = get_table_data(BundleConfigs, args,
+                           appends=['issue_user',
+                                    'bundle_config_related_namespace_id',
+                                    'bundle_config_related_strategy_id'])
+    user_obj = Users.query.get(session['SELFID'])
+    namespace_list = [upn.namespace_id for upn in user_obj.permitted_namespaces]
+    strategy_list = [upa.app_group_id for upa in user_obj.permitted_app_groups]
 
     result = [{"DT_RowId": "row_" + l['id'],
                "id": l.get('id'),
@@ -132,7 +139,8 @@ def load_bundle_config_table():
                "issue_user": l.get("issue_user"),
                "issue_result": result_dict.get(l.get("issue_result", 0)),
                "issue_at": l.get("issue_at"),
-               } for l in lines['records']]
+               } for l in lines['records'] if l['bundle_config_related_strategy_id'] in strategy_list and l[
+                  'bundle_config_related_namespace_id'] in namespace_list]
     logger.info('Making bundle config table')
 
     return jsonify({

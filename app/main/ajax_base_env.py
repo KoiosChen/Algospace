@@ -3,7 +3,7 @@ from flask_login import login_required
 from ..models import Permission, NameSpaces, AppGroups, Apps, Users, PermitApp
 from ..decorators import permission_required
 from . import main
-from app import logger, redis_db
+from app import logger, redis_db, db
 from app.proccessing_data.make_tables import make_table_config_files
 from app.MyModule.prepare_sql import search_sql
 from sqlalchemy import and_
@@ -38,8 +38,9 @@ def new_app():
     app_group_id = args.get('app_group_id')
     new_app_name = args.get('new_app_name')
     new_one = new_data_obj(Apps, **{"name": new_app_name, "app_group_id": app_group_id})
-    new_data_obj(PermitApp, **{"user_id": session['SELFID'], "app_id": new_one['obj'].id})
+    new_app_permit = new_data_obj(PermitApp, **{"user_id": session['SELFID'], "app_id": new_one['obj'].id})
     result = "新增成功" if new_one.get('status') else "此实例已存在"
+    db.session.commit()
     return jsonify({"status": "OK", "content": result})
 
 

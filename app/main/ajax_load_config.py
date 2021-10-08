@@ -159,24 +159,20 @@ def get_config_file():
     return jsonify({"status": "OK", "content": result})
 
 
-def role_permission(valid_target, user_id, target_id, rights):
-    pass
-
-
 @main.route('/config_related', methods=['GET'])
 @login_required
 @permission_required(Permission.USER)
 def get_config_related():
-    permit_map_dict = {"NameSpaces": "PermitNamespace", "AppGroups": "PermitAppGroup", "Apps": "PermitApps"}
     try:
         id_ = request.args.get('content')
         table_name = request.args.get('table_name')
         foreign_obj = request.args.get('foreign_obj')
-        obj = eval(table_name).query.get(eval(id_))
+        obj = eval(table_name).query.get(id_)
         result = [{"id": 0, "text": "请选择"}]
         for a in getattr(obj, foreign_obj):
             if getattr(a, 'validate_user')(session['SELFID']):
                 result.append({"id": a.id, "text": a.name})
         return jsonify({"status": "OK", "content": result})
     except Exception as e:
+        logger.error(str(e))
         return jsonify({"status": "OK", "content": []})

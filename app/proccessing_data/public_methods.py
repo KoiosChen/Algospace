@@ -151,8 +151,14 @@ def __make_table(fields, table, strainer=None):
                 tmp[f] = [pn.owner.id for pn in PermitAppGroup.query.filter_by(app_group_id=table.id).all()]
         elif f == 'related_strategies':
             tmp[f] = [ag.name for ag in table.app_groups]
+        elif f == 'related_strategies_id':
+            tmp[f] = [ag.id for ag in table.app_groups]
         elif f == 'related_namespace_id':
             tmp[f] = [n.id for n in table.related_namespaces]
+        elif f == 'bundle_config_related_strategy_id':
+            tmp[f] = table.related_apps[0].app_group.id
+        elif f == 'bundle_config_related_namespace_id':
+            tmp[f] = table.related_apps[0].app_group.related_namespaces[0].id
         elif f == 'related_namespaces':
             tmp[f] = [n.name for n in table.related_namespaces]
         elif f == 'objects':
@@ -221,7 +227,7 @@ def _advance_search(table, fields, advance_search):
     return and_fields_list
 
 
-def get_table_data(table, args, appends=[], removes=[], advance_search=None, order_by=None):
+def get_table_data(table, args, appends=[], removes=[], advance_search=None, order_by=None, ):
     page = args.get('page')
     current = args.get('current')
     size = args.get('size')
