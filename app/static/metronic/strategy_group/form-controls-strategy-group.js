@@ -14,7 +14,7 @@ jQuery.validator.addMethod("select2required", function (value, element) {
 }, "必选");
 
 
-var FormControlsNamespace = function () {
+var FormControlsStrategyGroup = function () {
     //== Private functions
     var update = function () {
         $("#m_form_namespace").validate({

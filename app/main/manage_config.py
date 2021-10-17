@@ -122,25 +122,42 @@ def load_bundle_config_table():
 
     """
     args = dict()
-    lines = get_table_data(BundleConfigs, args,
-                           appends=['issue_user',
-                                    'bundle_config_related_namespace_id',
-                                    'bundle_config_related_strategy_id'])
+    request_content = request.form
     user_obj = Users.query.get(session['SELFID'])
     namespace_list = [upn.namespace_id for upn in user_obj.permitted_namespaces]
     strategy_list = [upa.app_group_id for upa in user_obj.permitted_app_groups]
 
-    result = [{"DT_RowId": "row_" + l['id'],
-               "id": l.get('id'),
-               "filename": l.get('filename', ""),
-               "version": l.get('version', ""),
-               "uncompress_to": l.get('uncompress_to', ""),
-               "apply_at": l.get("apply_at"),
-               "issue_user": l.get("issue_user"),
-               "issue_result": result_dict.get(l.get("issue_result", 0)),
-               "issue_at": l.get("issue_at"),
-               } for l in lines['records'] if l['bundle_config_related_strategy_id'] in strategy_list and l[
-                  'bundle_config_related_namespace_id'] in namespace_list]
+    if request_content:
+        lines = get_table_data_by_id(Apps, request_content.get('strategy_id').split("_")[-1], appends=["instances"])
+        result = [{"DT_RowId": "row_" + l['id'],
+                   "id": l.get('id'),
+                   "filename": l.get('filename', ""),
+                   "version": l.get('version', ""),
+                   "uncompress_to": l.get('uncompress_to', ""),
+                   "apply_at": l.get("apply_at"),
+                   "issue_user": l.get("issue_user"),
+                   "issue_result": result_dict.get(l.get("issue_result", 0)),
+                   "issue_at": l.get("issue_at"),
+                   } for l in lines['instances']]
+    else:
+        lines = get_table_data(BundleConfigs, args,
+                               appends=['issue_user',
+                                        'bundle_config_related_namespace_id',
+                                        'bundle_config_related_strategy_id'])
+        result = [{"DT_RowId": "row_" + l['id'],
+                   "id": l.get('id'),
+                   "filename": l.get('filename', ""),
+                   "version": l.get('version', ""),
+                   "uncompress_to": l.get('uncompress_to', ""),
+                   "apply_at": l.get("apply_at"),
+                   "issue_user": l.get("issue_user"),
+                   "issue_result": result_dict.get(l.get("issue_result", 0)),
+                   "issue_at": l.get("issue_at"),
+                   } for l in lines['records'] if l['bundle_config_related_strategy_id'] in strategy_list and l[
+                      'bundle_config_related_namespace_id'] in namespace_list]
+
+
+
     logger.info('Making bundle config table')
 
     return jsonify({

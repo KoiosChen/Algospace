@@ -11,11 +11,11 @@ from ..main.mattermost import bot_hook
 from collections import defaultdict
 
 
-@main.route('/namespace_manage', methods=['GET'])
+@main.route('/strategy_group_manage', methods=['GET'])
 @login_required
 @permission_required(Permission.USER)
-def namespace_manage():
-    return render_template('namespace_manage.html')
+def strategy_group_manage():
+    return render_template('strategy_group_manage.html')
 
 
 @main.route('/load_namespace_table', methods=['POST'])

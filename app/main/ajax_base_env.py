@@ -10,7 +10,7 @@ from sqlalchemy import and_
 import yaml
 import json
 from collections import defaultdict
-from app.proccessing_data.public_methods import new_data_obj, get_table_data_by_id
+from app.proccessing_data.public_methods import new_data_obj, get_table_data_by_id, get_table_data
 
 
 @main.route('/bundle_config_file_table', methods=['POST'])
@@ -44,13 +44,39 @@ def new_app():
     return jsonify({"status": "OK", "content": result})
 
 
-@main.route('/get_app_info', methods=['GET'])
+@main.route('/get_app_info', methods=['GET', 'POST'])
 @login_required
 @permission_required(Permission.USER)
 def get_app_info():
-    args = request.args.get("app_id")
-    content = get_table_data_by_id(Apps, args, appends=['deploy_at'])
-    return jsonify({"status": "OK", "content": content})
+    if request.method == ['GET']:
+        content = get_table_data_by_id(Apps, request.args.get("app_id"), appends=['deploy_at'])
+        return jsonify({"status": "OK", "content": content})
+    else:
+        args = dict()
+        request_content = request.form
+        strategy_group_id = request_content.get('strategy_group_id')
+        length = eval(request_content.get('length'))
+        if length > 0:
+            args['page'] = 'true'
+            args['size'] = length
+            args['current'] = eval(request_content.get('start')) / length + 1
+        args['search'] = {"app_group_id": strategy_group_id.split("_")[-1]}
+        lines = get_table_data(Apps, args)
+        result = [{"DT_RowId": "row_" + l['id'],
+                   "id": l.get('id'),
+                   "instance_name": l.get('name'),
+                   "latest_version": l.get('version', ""),
+                   } for l in lines['records']]
+        logger.info('Making bundle config table')
+
+        return jsonify({
+            "draw": int(request.form.get('draw')),
+            "recordsTotal": lines['total'],
+            "recordsFiltered": lines['total'],
+            "data": result,
+            "options": [],
+            "files": []
+        })
 
 
 @main.route('/get_user_list', methods=['GET'])

@@ -65,5 +65,5 @@ $(document).ready(function () {
     });
 
     namespace_table = DatatableNamespace();
-    FormControlsNamespace.update_info();
+    FormControlsStrategyGroup.update_info();
 });

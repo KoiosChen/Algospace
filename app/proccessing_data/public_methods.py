@@ -139,16 +139,15 @@ def __make_table(fields, table, strainer=None):
             tmp[f] = table.apply_user.username if table.apply_user_id else ""
         elif f == 'issued_version':
             tmp[f] = table.related_apps[0].version
-        elif f == 'owner':
-            if table.__class__.__name__ == 'NameSpaces':
-                tmp[f] = [pn.owner.username for pn in PermitNamespace.query.filter_by(namespace_id=table.id).all()]
-            elif table.__class__.__name__ == 'AppGroups':
-                tmp[f] = [pn.owner.username for pn in PermitAppGroup.query.filter_by(app_group_id=table.id).all()]
-        elif f == 'owner_id':
-            if table.__class__.__name__ == 'NameSpaces':
-                tmp[f] = [pn.owner.id for pn in PermitNamespace.query.filter_by(namespace_id=table.id).all()]
-            elif table.__class__.__name__ == 'AppGroups':
-                tmp[f] = [pn.owner.id for pn in PermitAppGroup.query.filter_by(app_group_id=table.id).all()]
+        elif f == 'owner' or f == 'owner_id':
+            x = {'NameSpaces': {"table": PermitNamespace, 'key': PermitNamespace.namespace_id},
+                 'AppGroups': {"table": PermitAppGroup, 'key': PermitAppGroup.app_group_id}}
+
+            y = {"owner": "username", "owner_id": "id"}
+
+            tmp[f] = [getattr(pn.owner, y[f]) for pn in x[table.__class__.__name__]['table'].query.filter(
+                getattr(x[table.__class__.__name__]['key'], "__eq__")(table.id)).all()]
+
         elif f == 'related_strategies':
             tmp[f] = [ag.name for ag in table.app_groups]
         elif f == 'related_strategies_id':
@@ -161,6 +160,11 @@ def __make_table(fields, table, strainer=None):
             tmp[f] = table.related_apps[0].app_group.related_namespaces[0].id
         elif f == 'related_namespaces':
             tmp[f] = [n.name for n in table.related_namespaces]
+        elif f == 'instances':
+            config_list = list()
+            for i in table.bundle_configurations:
+                config_list.append(__make_table(table_fields(eval(i.__class__.__name__), appends=["issue_user"]), i))
+            tmp[f] = config_list
         elif f == 'objects':
             tmp1 = list()
             t1 = getattr(table, f)
