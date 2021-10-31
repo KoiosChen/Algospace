@@ -1,6 +1,6 @@
 from flask import request, jsonify, session
 from flask_login import login_required
-from ..models import Permission, NameSpaces, AppGroups, Apps, Users, PermitApp
+from ..models import Permission, NameSpaces, AppGroups, Apps, Users, PermitApp, PermitAppGroup, BundleConfigs
 from ..decorators import permission_required
 from . import main
 from app import logger, redis_db, db
@@ -35,7 +35,7 @@ def bundle_config_file_table():
 @permission_required(Permission.USER)
 def new_app():
     args = request.get_json()
-    app_group_id = args.get('app_group_id')
+    app_group_id = args.get('app_group_id').split("_")[-1]
     new_app_name = args.get('new_app_name')
     new_one = new_data_obj(Apps, **{"name": new_app_name, "app_group_id": app_group_id})
     new_app_permit = new_data_obj(PermitApp, **{"user_id": session['SELFID'], "app_id": new_one['obj'].id})
@@ -105,3 +105,72 @@ def get_namespaces():
         return jsonify({"status": "OK", "content": result})
     except Exception as e:
         return jsonify({"status": "OK", "content": []})
+
+
+@main.route('/delete_strategy', methods=['POST'])
+@login_required
+@permission_required(Permission.USER)
+def delete_strategy():
+    args = request.get_json()
+    raise_list = list()
+    for arg in args:
+        app_group_id = arg.get('DT_RowId').split("_")[-1]
+        app_group_obj = AppGroups.query.get(app_group_id)
+        if not app_group_obj:
+            raise_list.append(f'{arg["strategy_name"]}不存在')
+            continue
+        if app_group_obj.apps.all():
+            raise_list.append(f'{arg["strategy_name"]}存在实例不可删除')
+            continue
+
+        permit_obj = PermitAppGroup.query.filter_by(app_group_id=app_group_id).all()
+        for po in permit_obj:
+            db.session.delete(po)
+        db.session.delete(app_group_obj)
+        db.session.commit()
+
+    return jsonify({"status": "OK", "content": ";<br>".join(raise_list) if raise_list else "删除成功"})
+
+
+@main.route('/delete_instance', methods=['POST'])
+@login_required
+@permission_required(Permission.USER)
+def delete_instance():
+    args = request.get_json()
+    raise_list = list()
+    for arg in args:
+        app_id = arg.get('DT_RowId').split("_")[-1]
+        app_obj = Apps.query.get(app_id)
+        if not app_obj:
+            raise_list.append(f'{arg["instance_name"]}不存在')
+            continue
+        if app_obj.bundle_configurations:
+            raise_list.append(f'{arg["instance_name"]}存在关联配置文件不可删除')
+            continue
+
+        permit_obj = PermitApp.query.filter_by(app_id=app_id).all()
+        for po in permit_obj:
+            db.session.delete(po)
+        db.session.delete(app_obj)
+        db.session.commit()
+
+    return jsonify({"status": "OK", "content": ";<br>".join(raise_list) if raise_list else "删除成功"})
+
+
+@main.route('/delete_file', methods=['POST'])
+@login_required
+@permission_required(Permission.USER)
+def delete_file():
+    args = request.get_json()
+    raise_list = list()
+    for arg in args:
+        bundle_config_file_id = arg.get('DT_RowId').split("_")[-1]
+        bundle_config_obj = BundleConfigs.query.get(bundle_config_file_id)
+        if not bundle_config_obj:
+            raise_list.append(f'{arg["instance_name"]}不存在')
+            continue
+
+        db.session.delete(bundle_config_obj)
+        db.session.commit()
+
+    return jsonify({"status": "OK", "content": ";<br>".join(raise_list) if raise_list else "删除成功"})

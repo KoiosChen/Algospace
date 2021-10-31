@@ -74,10 +74,14 @@ def submit_bundle_deploy():
     logger.debug(f"request json {transfer_json}")
 
     deploy_reason = transfer_json.get('deploy_reason')
-    app_id = transfer_json.get('app_id')
-    uncompress_to = transfer_json.get('uncompress_to')
+    # 此处的app，就是策略的instance
+    app_id = transfer_json.get('app_id').split("_")[-1]
 
     app_obj = Apps.query.get(app_id)
+    app_group_name = app_obj.app_group.name
+    namespace_name = app_obj.app_group.related_namespaces[0].name
+    uncompress_to = f"{namespace_name}/{app_group_name}/{app_obj.name}"
+
     if app_obj.configurations:
         max_version = max([c.version for c in app_obj.configurations])
     else:
@@ -128,7 +132,7 @@ def load_bundle_config_table():
     strategy_list = [upa.app_group_id for upa in user_obj.permitted_app_groups]
 
     if request_content:
-        lines = get_table_data_by_id(Apps, request_content.get('strategy_id').split("_")[-1], appends=["instances"])
+        lines = get_table_data_by_id(Apps, request_content.get('instance_id').split("_")[-1], appends=["config_files"])
         result = [{"DT_RowId": "row_" + l['id'],
                    "id": l.get('id'),
                    "filename": l.get('filename', ""),
@@ -138,7 +142,7 @@ def load_bundle_config_table():
                    "issue_user": l.get("issue_user"),
                    "issue_result": result_dict.get(l.get("issue_result", 0)),
                    "issue_at": l.get("issue_at"),
-                   } for l in lines['instances']]
+                   } for l in lines['config_files']]
     else:
         lines = get_table_data(BundleConfigs, args,
                                appends=['issue_user',
@@ -155,8 +159,6 @@ def load_bundle_config_table():
                    "issue_at": l.get("issue_at"),
                    } for l in lines['records'] if l['bundle_config_related_strategy_id'] in strategy_list and l[
                       'bundle_config_related_namespace_id'] in namespace_list]
-
-
 
     logger.info('Making bundle config table')
 

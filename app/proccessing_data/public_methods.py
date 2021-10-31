@@ -160,7 +160,7 @@ def __make_table(fields, table, strainer=None):
             tmp[f] = table.related_apps[0].app_group.related_namespaces[0].id
         elif f == 'related_namespaces':
             tmp[f] = [n.name for n in table.related_namespaces]
-        elif f == 'instances':
+        elif f == 'config_files':
             config_list = list()
             for i in table.bundle_configurations:
                 config_list.append(__make_table(table_fields(eval(i.__class__.__name__), appends=["issue_user"]), i))

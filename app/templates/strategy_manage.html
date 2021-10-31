@@ -65,32 +65,43 @@
             </div>
         </div>
         <div class="m-portlet__body">
-            <table id="table_strategy_manage" class="display nowrap" style="width:100%">
-                <thead>
-                <tr>
-                    <th></th>
-                    <th>Strategy Name</th>
-                    <th>Description</th>
-                    <th>Namespace</th>
-                    <th>Local Path</th>
-                    <th>DryRun Path</th>
-                    <th>Owner</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tfoot>
-                <tr>
-                    <th></th>
-                    <th>Strategy Name</th>
-                    <th>Description</th>
-                    <th>Namespace</th>
-                    <th>Local Path</th>
-                    <th>DryRun Path</th>
-                    <th>Owner</th>
-                    <th>Action</th>
-                </tr>
-                </tfoot>
-            </table>
+            <div class="m-section">
+                <div class="m-section__content">
+                    <button id="delete_strategy" type="button" class="btn m-btn--square  btn-secondary m-btn m-btn--custom m-btn--label-danger m-btn--bolder m-btn--uppercase">
+                        Delete strategy
+                    </button>
+                </div>
+                <div class="m-section__content">
+                    <table id="table_strategy_manage" class="display nowrap" style="width:100%">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th>Strategy Name</th>
+                            <th>Description</th>
+                            <th>Namespace</th>
+                            <th>Local Path</th>
+                            <th>DryRun Path</th>
+                            <th>Owner</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tfoot>
+                        <tr>
+                            <th></th>
+                            <th>Strategy Name</th>
+                            <th>Description</th>
+                            <th>Namespace</th>
+                            <th>Local Path</th>
+                            <th>DryRun Path</th>
+                            <th>Owner</th>
+                            <th>Action</th>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+
         </div>
     </div>
 
@@ -208,6 +219,152 @@
     </div>
 
     <!-- 模态框（Modal）end -->
+
+    <div class="modal fade" id="modal_new_bundle_config" tabindex="-1" role="dialog" aria-labelledby=""
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="">
+                        Bundle Deploy
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="la la-remove"></span>
+                    </button>
+                </div>
+                <form class="m-form m-form--fit m-form--label-align-right" id="m_form_bundle_config"
+                      data-select2-id="82">
+                    <div class="modal-body">
+                        <div class="m-form__content">
+                            <div class="m-alert m-alert--icon alert alert-danger m--hide" role="alert"
+                                 id="m_form_bundle_config_msg">
+                                <div class="m-alert__icon">
+                                    <i class="la la-warning"></i>
+                                </div>
+                                <div class="m-alert__text">
+                                    填写信息有误，请检查重填后再次提交！
+                                </div>
+                                <div class="m-alert__close">
+                                    <button type="button" class="close" data-close="alert" aria-label="Close"></button>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="app_id">
+
+                        <div class="form-group m-form__group row m--margin-top-5">
+                            <label class="col-form-label col-lg-3 col-sm-12">
+                                deployed version
+                            </label>
+                            <div class="col-lg-6 col-md-9 col-sm-12">
+                                <input type="text" class="form-control"
+                                       style="border: 0px;outline:none;cursor: pointer;" readonly="readonly"
+                                       id="deployed_version">
+                            </div>
+                        </div>
+
+                        <div class="form-group m-form__group row m--margin-top-10">
+                            <label class="col-form-label col-lg-3 col-sm-12">
+                                upload *
+                            </label>
+                            <div class="col-lg-6 col-md-9 col-sm-12">
+                                <div class="m-dropzone dropzone m-dropzone--success dz-clickable"
+                                     id="m-dropzone">
+                                    <div class="m-dropzone__msg dz-message needsclick">
+                                        <h3 class="m-dropzone__msg-title">
+                                            拖动文件至此或点击上传
+                                        </h3>
+                                        <span class="m-dropzone__msg-desc">
+                                            仅允许.tar, .tgz, .tar.gz, .zip格式压缩文件
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group m-form__group row m--margin-top-20">
+                            <label class="col-form-label col-lg-3 col-sm-12">
+                                memo
+                            </label>
+                            <div class="col-lg-9 col-md-9 col-sm-12">
+                                <textarea class="form-control m-input m-input--air" id="apply_reason"
+                                          name="deploy_reason"
+                                          rows="1" style="width: 75%"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                关闭
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="sendmail_fromexcel">
+                                提交
+                            </button>
+                        </div>
+
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal_new_instance" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="">
+                        New Instance
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="la la-remove"></span>
+                    </button>
+                </div>
+                <form class="m-form m-form--fit m-form--label-align-right" id="m_form_new_instance"
+                      data-select2-id="82">
+                    <div class="modal-body">
+                        <div class="m-form__content">
+                            <div class="m-alert m-alert--icon alert alert-danger m--hide" role="alert"
+                                 id="m_form_new_instance_msg">
+                                <div class="m-alert__icon">
+                                    <i class="la la-warning"></i>
+                                </div>
+                                <div class="m-alert__text">
+                                    填写信息有误，请检查重填后再次提交！
+                                </div>
+                                <div class="m-alert__close">
+                                    <button type="button" class="close" data-close="alert" aria-label="Close"></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="group_id">
+
+                        <div class="form-group m-form__group row m--margin-top-20">
+                            <label class="col-form-label col-lg-3 col-sm-9">
+                                Instance *
+                            </label>
+                            <div class="col-lg-6 col-md-9 col-sm-12">
+                                <input type="text" class="form-control" placeholder="请输入策略实例名称"
+                                       id="new_instance_name" name="new_instance_name">
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                关闭
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="submit_new_instance">
+                                提交
+                            </button>
+                        </div>
+
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
 {% endblock %}
 
 
@@ -219,6 +376,7 @@
     <script type="text/javascript" charset="utf8" src="../static/datatable/jquery.dataTables.min.js"></script>
     <script type="text/javascript" charset="utf8" src="../static/datatable/dataTables.buttons.min.js"></script>
     <script type="text/javascript" charset="utf8" src="../static/datatable/dataTables.select.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="../static/Editor-1.6.5/js/dataTables.editor.js"></script>
     <script type="text/javascript" charset="utf8" src="../static/datatable/showdown.min.js"></script>
     <script src="../static/js/moment.min.js"></script>
     <script src="../static/js/daterangepicker.js"></script>
@@ -229,26 +387,35 @@
     <script src="../static/datatable/mylang.js" type="text/javascript"></script>
     <script src="../static/metronic-default/assets/demo/default/custom/components/forms/widgets/select2.js"
             type="text/javascript"></script>
-
+    <script src="../static/metronic/public_js/delete_strategy.js" type="text/javascript"></script>
     <script src="../static/metronic/public_js/get_user_list.js" type="text/javascript"></script>
     <script src="../static/metronic/public_js/get_namespace.js" type="text/javascript"></script>
     <script src="../static/metronic/strategy/form-controls-strategy.js"
             type="text/javascript"></script>
+    <script src="../static/metronic/manage_config_files/config_select2.js" type="text/javascript"></script>
+    <script src="../static/metronic/manage_config_files/form-controls-bundle-config-files.js"
+            type="text/javascript"></script>
+    <script src="../static/metronic/strategy/manage_strategy.js" type="text/javascript"></script>
     <script src="../static/metronic/strategy/strategy_form.js" type="text/javascript"></script>
+    <script src="../static/metronic/strategy/dropzone_upload_budle_config_file.js" type="text/javascript"></script>
+
 
     <script>
-        $("#new_strategy").click(function () {
-            $("#new_strategy_name").val("");
-            $("#strategy_desc").val("");
-            $("#local_path").val("");
-            $("#dryrun_path").val("");
-            //$("div.form-control-feedback").remove();
-            let select_id = "#m_select2_owners"
-            let namespace_select_id = "#namespace_select_in_modal"
-            get_user_list(select_id)
-            get_namespaces(namespace_select_id)
-            $("#modal_new_strategy").removeData("bs.modal").modal("show");
-        });
+        function NewStrategyInstance(sc_id) {
+            let params = {"strategy_id": sc_id};
+            console.log(params)
+            $("#group_id").val(sc_id)
+            $("#modal_new_instance").removeData("bs.modal").modal("show");
+        }
+
+        function UploadStrategyFile(sc_id) {
+            let params = {"instance_id": sc_id};
+            console.log(params)
+            //$("#group_id").val(sc_id)
+            $("#app_id").val(sc_id)
+            $("#modal_new_bundle_config").removeData("bs.modal").modal("show");
+        }
+
 
         function EditStrategy(sc_id, action) {
             let params = {"strategy_id": sc_id, "action": action};
@@ -280,7 +447,7 @@
                 }
             });
             let select_id = "#m_select2_owners"
-            get_user_list(select_id,owern_id)
+            get_user_list(select_id, owern_id)
             get_namespaces("#namespace_select_in_modal", related_namespace_id)
         }
 

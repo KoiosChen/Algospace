@@ -1,5 +1,7 @@
 var strategy_table;
 var editor;
+var childTable;
+var grandChildTable;
 
 var DatatableStrategy = function () {
     console.log("making strategy table");
@@ -25,8 +27,11 @@ var DatatableStrategy = function () {
                 "targets": 7,
                 "data": "DT_RowId",
                 "render": function (data, type, full, meta) {
-                    return '<a ' + 'onClick="return EditStrategy(\'' + data + '\', ' + 1 + ')" class="m-portlet__nav-link btn m-btn m-btn--hover-info m-btn--icon m-btn--icon-only m-btn--pill" title="Accept">\
+                    return '<a ' + 'onClick="return EditStrategy(\'' + data + '\', ' + 1 + ')" class="m-portlet__nav-link btn m-btn m-btn--hover-info m-btn--icon m-btn--icon-only m-btn--pill" title="Edit Strategy">\
                                 <i class="fa fa-pencil"></i>\
+                            </a>\
+                            <a ' + 'onClick="return NewStrategyInstance(\'' + data + '\')" class="m-portlet__nav-link btn m-btn m-btn--hover-primary m-btn--icon m-btn--icon-only m-btn--pill" title="New Instance">\
+                                <i class="fa fa-plus"></i>\
                             </a>\
                             ';
                 }
@@ -47,7 +52,7 @@ var DatatableStrategy = function () {
             {data: "dryrun_path"},
             {data: "owner"}
         ],
-        select: {},
+        select: true,
         buttons: [],
         initComplete: function () {
             init = false;
@@ -68,7 +73,12 @@ var DatatableStrategy = function () {
 $(document).ready(function () {
     strategy_table = DatatableStrategy();
     FormControlsStrategy.update_info();
+    FormNewInstanceControls.update_info();
+    FormControlsBundleDeploy.init();
+    delete_items("delete_strategy")
     // Add event listener for opening and closing first level childdetails
+
+
     $('#table_strategy_manage tbody').on('click', 'td.details-control', function () {
         var tr = $(this).closest('tr');
         var row = strategy_table.row(tr);
@@ -86,12 +96,15 @@ $(document).ready(function () {
         } else {
             // Open this row
             row.child(
-                '<table class="child_table" id = "child_details' + index + '" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;width:100%">' +
+                '<div class="m-section" style="padding-left:50px;width:100%"><div class="m-section__content"><button id="delete_instance" type="button" class="btn m-btn--square  btn-secondary m-btn m-btn--custom m-btn--label-danger m-btn--bolder m-btn--uppercase btn-sm">\n' +
+                'Delete instance' +
+                '</button>\</div><div class="m-section__content">' +
+                '<table class="child_table" id = "child_details' + index + '" cellpadding="5" cellspacing="0" border="0" style="width:100%">' +
                 '<thead><tr><th></th><th>Instance Name</th><th>Deployed Version</th><th>Action</th></tr></thead><tbody>' +
-                '</tbody></table>').show();
+                '</tbody></table></div></div><script>delete_items("delete_instance")</script>').show();
 
 
-            var childTable = $('#child_details' + index).DataTable({
+            childTable = $('#child_details' + index).DataTable({
                 Dom: "Bfrtip",
                 scrollY: '100vh',
                 scrollCollapse: true,
@@ -115,8 +128,11 @@ $(document).ready(function () {
                             "targets": 3,
                             "data": "DT_RowId",
                             "render": function (data, type, full, meta) {
-                                return '<a ' + 'onClick="return EditStrategy(\'' + data + '\', ' + 1 + ')" class="m-portlet__nav-link btn m-btn m-btn--hover-info m-btn--icon m-btn--icon-only m-btn--pill" title="Accept">\
+                                return '<a ' + 'onClick="return EditStrategy(\'' + data + '\', ' + 1 + ')" class="m-portlet__nav-link btn m-btn m-btn--hover-info m-btn--icon m-btn--icon-only m-btn--pill" title="Edit Instance">\
                                 <i class="fa fa-pencil"></i>\
+                            </a>\
+                            <a ' + 'onClick="return UploadStrategyFile(\'' + data + '\')" class="m-portlet__nav-link btn m-btn m-btn--hover-danger m-btn--icon m-btn--icon-only m-btn--pill" title="New File">\
+                                <i class="fa fa-plus"></i>\
                             </a>\
                             ';
                             }
@@ -134,6 +150,8 @@ $(document).ready(function () {
                     {"data": "latest_version"},
                 ],
                 destroy: true,
+                select: true,
+                buttons: [],
             });
             tr.addClass('shown');
         }
@@ -150,15 +168,19 @@ $(document).ready(function () {
             } else {
                 // Open this row
                 c_row.child(
-                    '<table id = "child_details_2" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;width:100%">' +
+                    '<div class="m-section" style="padding-left:50px;width:100%"><div class="m-section__content"><button id="delete_file" type="button" class="btn m-btn--square  btn-secondary m-btn m-btn--custom m-btn--label-danger m-btn--bolder m-btn--uppercase">\n' +
+                    'Delete file' +
+                    '</button>\</div><div class="m-section__content">' +
+                    '<table id = "child_details_2_' + childRowData.DT_RowId + '" cellpadding="5" cellspacing="0" border="0" style="width:100%">' +
                     '<thead><tr><th>Order</th><th>Filename</th><th>Version</th><th>Apply Time</th><th>Auditor</th><th>Audit Result</th><th>Audit Time</th></tr></thead><tbody>' +
-                    '</tbody></table>').show();
+                    '</tbody></table></div></div><script>delete_items("delete_file")</script>'
+                ).show();
 
-                $('#child_details_2').DataTable({
+                grandChildTable = $('#child_details_2_' + childRowData.DT_RowId).DataTable({
                     Dom: "Blfrtip",
                     scrollY: '100vh',
                     scrollCollapse: true,
-                    // paging: false,
+                    paging: false,
                     serverSide: true,
                     searching: false,
                     language: mylang,
@@ -167,7 +189,7 @@ $(document).ready(function () {
                     ajax: {
                         url: "/load_bundle_config_table",
                         type: "POST",
-                        data: {"strategy_id": childRowData.DT_RowId}
+                        data: {"instance_id": childRowData.DT_RowId}
                     },
                     "scrollX": true,
                     columns: [
@@ -179,8 +201,8 @@ $(document).ready(function () {
                         {data: "issue_result"},
                         {data: "issue_at"},
                     ],
-                    destroy: true,
-                    scrollY: '100px'
+                    select: true,
+                    buttons: [],
                 });
                 c_tr.addClass('shown');
             }

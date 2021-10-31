@@ -35,7 +35,7 @@ var FormNewInstanceControls = function () {
 
             submitHandler: function (form) {
                 let new_app_name = $("#new_instance_name").val()
-                let app_group_id = $("#app_groups_select_in_modal").val()
+                let app_group_id = $("#group_id").val()
                 $.ajax({
                     type: "POST",          //提交方式          
                     url: "new_app",  //提交的页面/方法名      
@@ -45,9 +45,14 @@ var FormNewInstanceControls = function () {
                     success: function (msg) {
                         if (msg.status === 'OK') {
                             $("#modal_new_instance").modal('hide');
-                            update_apps_by_app_group_select2($("#app_groups_select_in_modal option:checked").val(), "#apps_select_in_modal")
+                            if ($("#m_form_bundle_config select[id='app_groups_select_in_modal']").val()) {
+                                update_apps_by_app_group_select2($("#app_groups_select_in_modal option:checked").val(), "#apps_select_in_modal")
+                            }
+                            if (strategy_table.row("#" + app_group_id).child.isShown()) {
+                                childTable.ajax.data = {"strategy_group_id": app_group_id}
+                                childTable.ajax.reload()
+                            }
                             toastr.info(msg.content);
-                            console.log(configs_select)
                         } else {
                             toastr.warning(msg.content);
                         }
@@ -98,7 +103,7 @@ var FormControlsBundleDeploy = function () {
             submitHandler: function (form) {
                 let queued_file_length = myDropzone.getQueuedFiles().length;
                 console.log(queued_file_length);
-                if (queued_file_length>0) {
+                if (queued_file_length > 0) {
                     mApp.block('#modal_transfer .modal-content', {
                         overlayColor: '#000000',
                         type: 'loader',
@@ -106,8 +111,7 @@ var FormControlsBundleDeploy = function () {
                         size: 'lg'
                     });
                     myDropzone.processQueue();
-                }
-                else {
+                } else {
                     toastr.warning("未上传文件");
                 }
 

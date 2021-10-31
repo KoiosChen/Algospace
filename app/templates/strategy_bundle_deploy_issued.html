@@ -287,6 +287,7 @@
                                 <input type="text" class="form-control"
                                        style="border: 0px;outline:none;cursor: pointer;" readonly="readonly"
                                        id="namespace_strategy">
+                                <input type="hidden" id="group_id">
                             </div>
                         </div>
 
@@ -355,6 +356,7 @@
         $("#plus_new_instance").click(function () {
             if ($("#namespace_select_in_modal").val() !== "0" && $("#app_groups_select_in_modal").val() !== "0") {
                 $("#namespace_strategy").val($("#namespace_select_in_modal option:checked").text() + "/" + $("#app_groups_select_in_modal option:checked").text())
+                $("#group_id").val($("#app_groups_select_in_modal option:checked").val())
                 $("#modal_new_instance").removeData("bs.modal").modal("show");
             } else {
                 toastr.warning("namespace and strategy must be selected")
